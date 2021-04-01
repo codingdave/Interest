@@ -1,4 +1,6 @@
 ﻿using Interest.Commands;
+using Interest.Options;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -8,12 +10,19 @@ namespace Interest.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, ICreateWindow, IMainWindowViewModel
     {
-        public MainWindowViewModel(ConfigurationManagerReaderWriter reader)
+        public MainWindowViewModel(IConfiguration configuration)
         {
-            InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>() { new InterestPlanViewModel(reader, "first"), };
+            var options = configuration.Get<InterestOptions>();
+            if (options == null)
+            {
+                options = new InterestOptions();
+                options.InterestPlans.Add(new InterestPlanViewModelOptions());
+            }
+
+            InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>(options.InterestPlans.Select(ip => new InterestPlanViewModel(ip)));
 
             CreateWindowCommand = new DelegateCommand(() => CreateWindow?.Invoke());
-            AddInterestPlanCommand = new DelegateCommand(() => InterestPlanViewModels.Add(new InterestPlanViewModel(reader, "...")));
+            AddInterestPlanCommand = new DelegateCommand(() => InterestPlanViewModels.Add(new InterestPlanViewModel(new InterestPlanViewModelOptions())));
 
             ResetAllCommand = new DelegateCommand(() => InterestPlanViewModels.ToList().ForEach(ip => ip.ResetCommand.Execute()));
 

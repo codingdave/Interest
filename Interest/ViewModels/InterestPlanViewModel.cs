@@ -1,32 +1,23 @@
 ﻿using Interest.Commands;
+using Interest.Options;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace Interest.ViewModels
 {
     public class InterestPlanViewModel : ViewModelBase
     {
-        private ConfigurationManagerReaderWriter _conf;
-
+        internal InterestPlanViewModelOptions Values { get; }
         private IEnumerable<PaymentViewModel> _payments;
 
-        public InterestPlanViewModel(ConfigurationManagerReaderWriter configurationManagerReaderWriter, string title = null)
+        public InterestPlanViewModel(InterestPlanViewModelOptions values)
         {
-            _conf = configurationManagerReaderWriter;
-
-            Title = title;
+            Values = values;
 
             CalculateCommand = new DelegateCommand(() => Payments = Calculate());
             ResetCommand = new DelegateCommand(() => ResetAllInputValues());
-
-            _startMonth = DateTime.Parse(_conf.GetValue(nameof(StartMonth)), CultureInfo.InvariantCulture);
-            _years = int.Parse(_conf.GetValue(nameof(Years)), CultureInfo.InvariantCulture);
-            _unscheduledRepaymentPercentage = double.Parse(_conf.GetValue(nameof(UnscheduledRepaymentPercentage)), CultureInfo.InvariantCulture);
-            _borrowingPercentagePerYear = double.Parse(_conf.GetValue(nameof(BorrowingPercentagePerYear)), CultureInfo.InvariantCulture);
-            _redemptionPercentage = double.Parse(_conf.GetValue(nameof(RedemptionPercentage)), CultureInfo.InvariantCulture);
-            _loanAmount = double.Parse(_conf.GetValue(nameof(LoanAmount)), CultureInfo.InvariantCulture);
 
             CalculateCommand.Execute();
         }
@@ -158,7 +149,6 @@ namespace Interest.ViewModels
                 {
                     RaisePropertyChanged(nameof(RedemptionAmount));
 
-                    _conf.AddUpdateAppSettings(nameof(RedemptionPercentage), value.ToString());
                     CalculateCommand.Execute();
                 }
             }
@@ -166,16 +156,13 @@ namespace Interest.ViewModels
         #endregion
 
         #region StartMonth
-        private DateTime _startMonth;
-
         public DateTime StartMonth
         {
-            get { return _startMonth; }
+            get { return Values.StartMonth; }
             set
             {
-                if (SetProperty(ref _startMonth, value))
+                if (SetProperty(ref Values.StartMonth, value))
                 {
-                    _conf.AddUpdateAppSettings(nameof(StartMonth), value.ToString());
                     CalculateCommand.Execute();
                 }
             }
@@ -183,16 +170,13 @@ namespace Interest.ViewModels
         #endregion
 
         #region RedemptionFreeMonths
-        private int _redemptionFreeMonths;
-
         public int RedemptionFreeMonths
         {
-            get { return _redemptionFreeMonths; }
+            get { return Values.RedemptionFreeMonths; }
             set
             {
-                if (SetProperty(ref _redemptionFreeMonths, value))
+                if (SetProperty(ref Values.RedemptionFreeMonths, value))
                 {
-                    _conf.AddUpdateAppSettings(nameof(RedemptionFreeMonths), value.ToString());
                     CalculateCommand.Execute();
                 }
             }
@@ -200,16 +184,13 @@ namespace Interest.ViewModels
         #endregion
 
         #region UnscheduledRepaymentPercentage
-        private double _unscheduledRepaymentPercentage;
-
         public double UnscheduledRepaymentPercentage
         {
-            get { return _unscheduledRepaymentPercentage; }
+            get { return Values.UnscheduledRepaymentPercentage; }
             set
             {
-                if (SetProperty(ref _unscheduledRepaymentPercentage, value))
+                if (SetProperty(ref Values.UnscheduledRepaymentPercentage, value))
                 {
-                    _conf.AddUpdateAppSettings(nameof(UnscheduledRepaymentPercentage), value.ToString());
                     CalculateCommand.Execute();
                 }
             }
@@ -218,7 +199,6 @@ namespace Interest.ViewModels
 
         #region IsApplyAllÚnscheduledRepayments
         private bool _isApplyAllUnscheduledRepayments;
-
         public bool IsApplyAllUnscheduledRepayments
         {
             get { return _isApplyAllUnscheduledRepayments; }
@@ -230,36 +210,30 @@ namespace Interest.ViewModels
                 }
             }
         }
-
         #endregion
 
         #region Years
-        private int _years;
         public int Years
         {
-            get { return _years; }
+            get { return Values.Years; }
             set
             {
-                if (SetProperty(ref _years, value))
+                if (SetProperty(ref Values.Years, value))
                 {
-                    _conf.AddUpdateAppSettings(nameof(Years), value.ToString());
                     CalculateCommand.Execute();
                 }
             }
         }
-
         #endregion
 
         #region BorrowingPercentagePerYear
-        private double _borrowingPercentagePerYear;
         public double BorrowingPercentagePerYear
         {
-            get { return _borrowingPercentagePerYear; }
+            get { return Values.BorrowingPercentagePerYear; }
             set
             {
-                if (SetProperty(ref _borrowingPercentagePerYear, value))
+                if (SetProperty(ref Values.BorrowingPercentagePerYear, value))
                 {
-                    _conf.AddUpdateAppSettings(nameof(BorrowingPercentagePerYear), value.ToString());
                     CalculateCommand.Execute();
                 }
             }
@@ -267,15 +241,13 @@ namespace Interest.ViewModels
         #endregion
 
         #region LoanAmount
-        private double _loanAmount;
         public double LoanAmount
         {
-            get { return _loanAmount; }
+            get { return Values.LoanAmount; }
             set
             {
-                if (SetProperty(ref _loanAmount, value))
+                if (SetProperty(ref Values.LoanAmount, value))
                 {
-                    _conf.AddUpdateAppSettings(nameof(LoanAmount), value.ToString());
                     CalculateCommand.Execute();
                 }
             }
@@ -283,11 +255,10 @@ namespace Interest.ViewModels
         #endregion
 
         #region Title
-        private string _title;
         public string Title
         {
-            get => _title;
-            set => _ = SetProperty(ref _title, value);
+            get => Values.Title;
+            set => _ = SetProperty(ref Values.Title, value);
         }
         #endregion
     }

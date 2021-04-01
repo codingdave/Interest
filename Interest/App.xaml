@@ -4,4 +4,5 @@
              xmlns:local="clr-namespace:Interest"
              xmlns:view="clr-namespace:Interest.Views"
              >
+    <!--StartupUri="Views/MainWindow.xaml"-->
 </Application>
