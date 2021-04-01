@@ -38,13 +38,15 @@ namespace Interest.ViewModels
             InterestPlanViewModels.CollectionChanged += InterestPlanViewModels_CollectionChanged;
 
             CreateWindowCommand = new DelegateCommand(() => CreateWindow?.Invoke());
+
             AddInterestPlanCommand = new DelegateCommand(() =>
             {
                 var p = new InterestPlanViewModel(InterestPlanViewModelOptions.GetDefault());
                 InterestPlanViewModels.Add(p);
-                SelectedInterestPlanViewModel = p;
+                SelectedInterestPlanViewModelIndex = InterestPlanViewModels.IndexOf(p);
             });
-            DeleteInterestPlanCommand = new DelegateCommand(() => InterestPlanViewModels.Remove(SelectedInterestPlanViewModel));
+
+            DeleteInterestPlanCommand = new DelegateCommand(() => InterestPlanViewModels.Remove(InterestPlanViewModels.ElementAt(SelectedInterestPlanViewModelIndex)));
 
             ResetAllCommand = new DelegateCommand(() => InterestPlanViewModels.ToList().ForEach(ip => ip.ResetCommand.Execute()));
 
@@ -74,9 +76,9 @@ namespace Interest.ViewModels
         public DelegateCommand ResetAllCommand { get; }
         public DelegateCommand CalculateAllCommand { get; }
 
-        private InterestPlanViewModel _selectedInterestPlanViewModel;
+        private int _selectedInterestPlanViewModelIndex;
 
-        public InterestPlanViewModel SelectedInterestPlanViewModel { get => _selectedInterestPlanViewModel; set => SetProperty(ref _selectedInterestPlanViewModel, value); }
+        public int SelectedInterestPlanViewModelIndex { get => _selectedInterestPlanViewModelIndex; set => SetProperty(ref _selectedInterestPlanViewModelIndex, value); }
 
         public void OnClose()
         {

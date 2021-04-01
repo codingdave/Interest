@@ -34,7 +34,9 @@
             <MenuItem Header="About" Command="{Binding CreateWindowCommand}" HorizontalAlignment="Right"/>
         </Menu>
 
-        <TabControl Grid.Row="1" Margin="5,1,5,1" ItemsSource="{Binding InterestPlanViewModels}" SelectedItem="{Binding SelectedInterestPlanViewModel}"
+        <!--SelectedItem="{Binding SelectedInterestPlanViewModel}"-->
+        <TabControl Grid.Row="1" Margin="5,1,5,1" ItemsSource="{Binding InterestPlanViewModels}" 
+                    SelectedIndex="{Binding SelectedInterestPlanViewModelIndex}"
             Visibility="{Binding InterestPlanViewModels, Converter={StaticResource countToVisibilityConverter}, ConverterParameter=0}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
