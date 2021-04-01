@@ -71,14 +71,16 @@ namespace Interest.ViewModels
             var month = StartMonth;
             var endMonth = StartMonth.AddYears(Years);
             int i = 0;
+            var numPayments = Payments.Count();
             while (month < endMonth && currentDebt > 0)
             {
                 month = month.AddMonths(1);
-                var p = Payments.ElementAt(i);
-                var unscheduledRepayment = IsApplyAllUnscheduledRepayments && p.Month.Month == StartMonth.AddMonths(1).Month
-                    ? GetRequiredAmount(InitialPayments.First().InitialDebt * UnscheduledRepaymentPercentage, currentDebt)
-                    : p.UnscheduledRepayment;
-                var payment = new PaymentViewModel(p.Month, GetRequiredAmount(RedemptionAmount, currentDebt - unscheduledRepayment), currentDebt, BorrowingPercentage, unscheduledRepayment);
+                var unscheduledRepayment = IsApplyAllUnscheduledRepayments && month.Month == StartMonth.AddMonths(1).Month
+                    ? GetRequiredAmount(InitialPayments.First().InitialDebt * UnscheduledRepaymentPercentage / 100, currentDebt)
+                    : numPayments >= i
+                        ? Payments.ElementAt(i).UnscheduledRepayment
+                        : 0.0;
+                var payment = new PaymentViewModel(month, GetRequiredAmount(RedemptionAmount, currentDebt - unscheduledRepayment), currentDebt, BorrowingPercentage, unscheduledRepayment);
                 currentDebt = payment.ResidualDebt;
                 ret.Add(payment);
                 i++;

@@ -80,8 +80,6 @@
             <Label Content="{Binding TotalInterest}" />
             <Label Content="Remaining Debt: " />
             <Label Content="{Binding ResidualDebt}" />
-            <Label Content="Redemption Rate: " />
-            <Label Content="{Binding RedemptionPercentage, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" />
         </StackPanel>
         <StackPanel Grid.Row="3">
             <Button Content="Reset" Command="{Binding ResetCommand}"/>
