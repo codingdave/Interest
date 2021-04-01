@@ -18,7 +18,7 @@ namespace Interest
     {
         public App()
         {
-            // fix localization / Binding defaulting to german
+            // make globalization a user parameter
             // better numbers for Total Interest and Residual Debt
             // classes for percentage, currency, fraction?
             // MainWindow: Years, StartMonth

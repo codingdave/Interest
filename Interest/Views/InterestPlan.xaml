@@ -7,8 +7,9 @@
       xmlns:model="clr-namespace:Interest.Models"
       xmlns:view="clr-namespace:Interest.Views"
       xmlns:local="clr-namespace:Interest"
+      xmlns:SystemGlobalization="clr-namespace:System.Globalization;assembly=System.Runtime"
       xmlns:converters="clr-namespace:Interest.Converters"
-      d:DataContext="{d:DesignInstance Type=vm:InterestPlanViewModel, IsDesignTimeCreatable=True}"
+      d:DataContext="{d:DesignInstance Type=vm:InterestPlanViewModelDesignTime, IsDesignTimeCreatable=True}"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       >
@@ -52,9 +53,9 @@
             <Label Content="Lender:" />
             <TextBox Text="{Binding Lender, UpdateSourceTrigger=PropertyChanged}"/>
             <Label Content="Starting from:" />
-            <TextBox Text="{Binding StartMonth, StringFormat=d, ConverterCulture='de-DE'}" />
+            <TextBox Text="{Binding StartMonth, StringFormat=d,ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" />
             <Label Content="Loan (€):" />
-            <TextBox Text="{Binding LoanAmount, StringFormat=C2, ConverterCulture='de-DE'}"/>
+            <TextBox Text="{Binding LoanAmount, StringFormat=C2,ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}"/>
             <Label Content="Borrowing (%):" />
             <TextBox Text="{Binding BorrowingPercentagePerYear, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}"/>
             <Label Content="Years:" />
@@ -63,7 +64,7 @@
             <Label Content="Redemption free months:" />
             <TextBox Text="{Binding RedemptionFreeMonths}" />
             <Label Content="Monthly Payment/Redemption (€):" />
-            <TextBox Text="{Binding RedemptionAmount, StringFormat=C2, ConverterCulture='de-DE'}"
+            <TextBox Text="{Binding RedemptionAmount, StringFormat=C2,ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}"
                      IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
             <Label Content="Redemption (%):"
                      IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
@@ -89,7 +90,7 @@
             CanUserSortColumns="False"
             >
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path=Date, StringFormat=d, ConverterCulture='de-DE'}" Header="Date" FontWeight="Light" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Path=Date, StringFormat=d,ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" Header="Date" FontWeight="Light" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Path=UnscheduledRepayment, StringFormat=C2, ConverterCulture='de-DE', Mode=TwoWay, Converter={StaticResource InputValue}}" Header="Extra">
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
@@ -120,7 +121,7 @@
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=ReducedDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Reduced Debt" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Path=ReducedDebt, StringFormat=C2,ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" Header="Reduced Debt" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Path=Payment, StringFormat=C2, ConverterCulture='de-DE', Converter={StaticResource InputValue}}" Header="Payment">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
@@ -135,9 +136,9 @@
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=Interest, StringFormat=C2, ConverterCulture='de-DE'}" Header="Interest" IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding Path=Repayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Repayment" IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Residual Debt" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Path=Interest, StringFormat=C2,ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" Header="Interest" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding Path=Repayment, StringFormat=C2,ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" Header="Repayment" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2,ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" Header="Residual Debt" IsReadOnly="True" Width="*"/>
             </DataGrid.Columns>
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
@@ -152,9 +153,9 @@
 
         <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Total Interest: "/>
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding Path=TotalInterest, StringFormat=C2, ConverterCulture='de-DE'}" />
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding Path=TotalInterest, StringFormat=C2,ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" />
             <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Residual Debt: " />
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" />
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding Path=ResidualDebt, StringFormat=C2,ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" />
         </WrapPanel>
         
         <WrapPanel Grid.Row="3" HorizontalAlignment="Center">

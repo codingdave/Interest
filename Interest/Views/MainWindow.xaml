@@ -6,6 +6,7 @@
         xmlns:vm="clr-namespace:Interest.ViewModels"
         xmlns:view="clr-namespace:Interest.Views"
         xmlns:converters="clr-namespace:Interest.Converters"
+        xmlns:SystemGlobalization="clr-namespace:System.Globalization;assembly=System.Runtime"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModelDesignTime, IsDesignTimeCreatable=True}"
         d:Width="800"
         d:Height="600"
@@ -52,9 +53,9 @@
             <StackPanel>
                 <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Total Interest: "/>
-                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding TotalInterest, StringFormat='{}{0:c}', ConverterCulture='de-DE'}" />
+                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding TotalInterest, StringFormat='{}{0:c}',ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" />
                     <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Residual Debt: " />
-                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding ResidualDebt, StringFormat=' {0:c}', ConverterCulture='de-DE'}" />
+                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding ResidualDebt, StringFormat=' {0:c}',ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" />
                 </WrapPanel>
 
                 <WrapPanel HorizontalAlignment="Center">
