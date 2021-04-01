@@ -9,7 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewModels\InterestPlanViewModelDesignTime.cs" />
+    <Compile Remove="ViewModels\MainWindowViewModelDesignTime.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Resources\Splash.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DesignDataWithDesignTimeCreatableTypes Include="ViewModels\InterestPlanViewModelDesignTime.cs" />
+    <DesignDataWithDesignTimeCreatableTypes Include="ViewModels\MainWindowViewModelDesignTime.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,21 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\InterestPlan.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Views\InterestPlan.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
   </ItemGroup>
 
 </Project>
