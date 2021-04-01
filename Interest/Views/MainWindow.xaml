@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Interest.ViewModels"
         xmlns:view="clr-namespace:Interest.Views"
-        xmlns:local="clr-namespace:Interest"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"

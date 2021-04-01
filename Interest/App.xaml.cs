@@ -19,7 +19,6 @@ namespace Interest
         public App()
         {
             // fix localization / Binding defaulting to german
-            // fix rescaling flickering
             // do not show summary on mainwindow if only one loan is calculated
             // remove command button
             // add number of month
