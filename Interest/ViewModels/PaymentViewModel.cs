@@ -10,7 +10,7 @@ namespace Interest.ViewModels
         public PaymentViewModel(DateTime month, double monthlyPayment, double initialDebt, double BorrowingPercentagePerYear, double unscheduledRepayment)
         {
             _payment = new Payment(month, monthlyPayment, initialDebt, BorrowingPercentagePerYear, unscheduledRepayment);
-            if (ResidualDebt < 0) { throw new ArgumentOutOfRangeException("Residual Debt impossible"); }
+            if (ResidualDebt < -0.1) { throw new ArgumentOutOfRangeException("Residual Debt impossible"); }
         }
 
         Payment _payment;

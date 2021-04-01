@@ -7,10 +7,44 @@
         xmlns:view="clr-namespace:Interest.Views"
         xmlns:local="clr-namespace:Interest"
         mc:Ignorable="d"
-        WindowStyle="ThreeDBorderWindow" ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
-        SizeToContent="Height"
-        Title="MainWindow" Height="450" Width="800">
-    <view:InterestPlan/>
+        WindowStyle="ThreeDBorderWindow"
+        ResizeMode="CanResizeWithGrip"
+        SizeToContent="WidthAndHeight"
+        Title="InterestCalculator">
+    <DockPanel LastChildFill="True">
+        <ToolBar DockPanel.Dock="Top">
+            <Button ToolTip="Tooltip">
+                <Button.Content>
+                    <view:About/>
+                </Button.Content>
+            </Button>
+        </ToolBar>
+        <!--Click="DisplayPopup"-->
+        <!--<Button HorizontalAlignment="Left" Width="150" Margin="20,10,0,0" DockPanel.Dock="Top">
+            <StackPanel>
+                <TextBlock>Display Your Popup Text</TextBlock>
+                <Popup Name="myPopup">
+                    <TextBlock Name="myPopupText" Background="LightBlue" Foreground="Blue">Popup Text</TextBlock>
+                </Popup>
+            </StackPanel>
+        </Button>-->
+        <!--Click="CreatePopup"-->
+        <!--<Button Name="ButtonForPopup" HorizontalAlignment="Left" Width="150" Margin="20,10,0,0">
+            <StackPanel Name="aStackPanel">
+                <TextBlock>Create Popup</TextBlock>
+            </StackPanel>
+        </Button>-->
+
+        <view:About DockPanel.Dock="Right"/>
+        <!--<view:InterestPlan Grid.Row="0" DockPanel.Dock="Bottom"/>-->
+    </DockPanel>
+    <!--Height="500" Width="800"-->
+    <!---->
+    <!--<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>-->
+    <!--</Grid.RowDefinitions>-->
+    <!--</Grid>-->
 </Window>

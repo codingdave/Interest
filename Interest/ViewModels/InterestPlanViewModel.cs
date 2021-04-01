@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -10,20 +11,29 @@ namespace Interest.ViewModels
     {
         public InterestPlanViewModel()
         {
+            _conf = new ConfigurationManagerReaderWriter();
+
+            //var now = DateTime.Now;
+            //var startMonth = new DateTime(now.Year, now.Month, 1);
+            //_conf.GenerateDefaultValues(nameof(StartMonth), startMonth.ToString(CultureInfo.InvariantCulture));
+            //_conf.GenerateDefaultValues(nameof(Years), "15".ToString(CultureInfo.InvariantCulture));
+            //_conf.GenerateDefaultValues(nameof(UnscheduledRepaymentPercentage), "5".ToString(CultureInfo.InvariantCulture));
+            //_conf.GenerateDefaultValues(nameof(BorrowingPercentage), ".99".ToString(CultureInfo.InvariantCulture));
+            //_conf.GenerateDefaultValues(nameof(RedemptionPercentage), "2.5".ToString(CultureInfo.InvariantCulture));
+            //_conf.GenerateDefaultValues(nameof(LoanAmount), "250000".ToString(CultureInfo.InvariantCulture));
+
             ResetCommand = new DelegateCommand(() =>
-            {
-                var now = DateTime.Now;
-                StartMonth = new DateTime(now.Year, now.Month, 1);
+                {
+                    StartMonth = DateTime.Parse(_conf.GetValue(nameof(StartMonth)), CultureInfo.InvariantCulture);
+                    Years = int.Parse(_conf.GetValue(nameof(Years)), CultureInfo.InvariantCulture);
+                    UnscheduledRepaymentPercentage = double.Parse(_conf.GetValue(nameof(UnscheduledRepaymentPercentage)), CultureInfo.InvariantCulture);
+                    BorrowingPercentage = double.Parse(_conf.GetValue(nameof(BorrowingPercentage)), CultureInfo.InvariantCulture);
+                    RedemptionPercentage = double.Parse(_conf.GetValue(nameof(RedemptionPercentage)), CultureInfo.InvariantCulture);
+                    LoanAmount = double.Parse(_conf.GetValue(nameof(LoanAmount)), CultureInfo.InvariantCulture);
 
-                Years = 20;
-                UnscheduledRepaymentPercentage = 5;
-                BorrowingPercentage = 0.84;
-                RedemptionPercentage = 2.75;
-                LoanAmount = 381000;
-
-                InitialPayments = Initialize();
-                Payments = Initialize();
-            });
+                    InitialPayments = Initialize();
+                    Payments = Initialize();
+                });
 
             UpdateCommand = new DelegateCommand(() =>
             {
@@ -76,7 +86,7 @@ namespace Interest.ViewModels
                 month = month.AddMonths(1);
                 var unscheduledRepayment = IsApplyAllUnscheduledRepayments && month.Month == StartMonth.AddMonths(1).Month
                     ? GetRequiredAmount(InitialPayments.First().InitialDebt * UnscheduledRepaymentPercentage / 100.0, currentDebt)
-                    : numPayments >= i
+                    : numPayments > i
                         ? Payments.ElementAt(i).UnscheduledRepayment
                         : 0.0;
                 var payment = new PaymentViewModel(month, GetRequiredAmount(RedemptionAmount, currentDebt - unscheduledRepayment), currentDebt, BorrowingPercentage, unscheduledRepayment);
@@ -151,6 +161,7 @@ namespace Interest.ViewModels
                 if (SetProperty(ref _redemptionPercentage, value))
                 {
                     RaisePropertyChanged(nameof(RedemptionAmount));
+                    _conf.AddUpdateAppSettings(nameof(RedemptionPercentage), value.ToString());
                 }
             }
         }
@@ -174,7 +185,13 @@ namespace Interest.ViewModels
         public DateTime StartMonth
         {
             get { return _startMonth; }
-            set { SetProperty(ref _startMonth, value); }
+            set
+            {
+                if (SetProperty(ref _startMonth, value))
+                {
+                    _conf.AddUpdateAppSettings(nameof(StartMonth), value.ToString());
+                }
+            }
         }
         #endregion
 
@@ -184,7 +201,13 @@ namespace Interest.ViewModels
         public double UnscheduledRepaymentPercentage
         {
             get { return _unscheduledRepaymentPercentage; }
-            set { _unscheduledRepaymentPercentage = value; }
+            set
+            {
+                if (SetProperty(ref _unscheduledRepaymentPercentage, value))
+                {
+                    _conf.AddUpdateAppSettings(nameof(UnscheduledRepaymentPercentage), value.ToString());
+                }
+            }
         }
         #endregion
 
@@ -204,7 +227,13 @@ namespace Interest.ViewModels
         public int Years
         {
             get { return _years; }
-            set { SetProperty(ref _years, value); }
+            set
+            {
+                if (SetProperty(ref _years, value))
+                {
+                    _conf.AddUpdateAppSettings(nameof(Years), value.ToString());
+                }
+            }
         }
 
         #endregion
@@ -214,7 +243,13 @@ namespace Interest.ViewModels
         public double BorrowingPercentage
         {
             get { return _BorrowingPercentage; }
-            set { SetProperty(ref _BorrowingPercentage, value); }
+            set
+            {
+                if (SetProperty(ref _BorrowingPercentage, value))
+                {
+                    _conf.AddUpdateAppSettings(nameof(BorrowingPercentage), value.ToString());
+                }
+            }
         }
         #endregion
 
@@ -223,12 +258,20 @@ namespace Interest.ViewModels
         public double LoanAmount
         {
             get { return _loanAmount; }
-            set { SetProperty(ref _loanAmount, value); }
+            set
+            {
+                if (SetProperty(ref _loanAmount, value))
+                {
+                    _conf.AddUpdateAppSettings(nameof(LoanAmount), value.ToString());
+                }
+            }
         }
         #endregion
 
 
         private IEnumerable<PaymentViewModel> _payments;
+        private ConfigurationManagerReaderWriter _conf;
+
         public DelegateCommand ResetCommand { get; private set; }
         public DelegateCommand UpdateCommand { get; private set; }
     }

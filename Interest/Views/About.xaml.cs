@@ -1,7 +1,5 @@
-﻿using Interest.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,18 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Prism.Mvvm;
 
 namespace Interest.Views
 {
     /// <summary>
-    /// Interaktionslogik für Page1.xaml
+    /// Interaction logic for About.xaml
     /// </summary>
-    public partial class InterestPlan : UserControl
+    public partial class About : UserControl
     {
-        public InterestPlan()
+        public About()
         {
             InitializeComponent();
         }
