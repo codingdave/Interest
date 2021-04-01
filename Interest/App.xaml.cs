@@ -1,10 +1,12 @@
-﻿using Interest.Options;
+﻿using Interest.Logger;
+using Interest.Options;
 using Interest.ViewModels;
 using Interest.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -20,7 +22,6 @@ namespace Interest
         public App()
         {
             // update MWVM: TotalInterest and ResidualDebt whenever the tabs value change
-            // validation
             // scheint so zu sein, dass die _redemptionPercentage und borrowingrate in der UI verwechselt sind
             // create options menu, place language there 
             // classes for percentage, currency, fraction?
@@ -37,6 +38,8 @@ namespace Interest
             base.OnStartup(e);
 
             using IHost host = CreateHostBuilder(e.Args).Build();
+            var logger = host.Services.GetRequiredService<ILogger<App>>();
+            logger.LogInformation("From App. Running the host now..");
 
             // Start the application with the culture selected
             var configuration = host.Services.GetService<IConfiguration>();
@@ -46,10 +49,21 @@ namespace Interest
                 System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(options.CultureInfo);
             }
 
-            var vm = host.Services.GetService<MainWindowViewModel>();
-            var mw = host.Services.GetService<MainWindow>();
-            mw.DataContext = vm;
-            mw.ShowDialog();
+            try
+            {
+                var vm = host.Services.GetService<MainWindowViewModel>();
+                var mw = host.Services.GetService<MainWindow>();
+                mw.DataContext = vm;
+                mw.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                logger.LogError("Deleting appsettings.json to get rid of invalid configuration");
+                System.IO.File.Delete("appsettings.json");
+            }
+
+            Current.Shutdown();
         }
 
         static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -77,10 +91,17 @@ namespace Interest
                         {
                             options.IncludeScopes = true;
                             options.SingleLine = true;
-                            //options.TimestampFormat = "hh:mm:ss ";
-                            options.UseUtcTimestamp = true;
+                                //options.TimestampFormat = "hh:mm:ss ";
+                                options.UseUtcTimestamp = true;
                         })
-                        .AddDebug();
+                        .AddEventLog()
+                        .AddConsole()
+                        .AddDebug()
+                        .AddFileLogger(options =>
+                        {
+                            hostBuilderContext.Configuration.GetSection("Logging").GetSection("FileLogger").GetSection("Options").Bind(options);
+                        });
+                    ;
                 })
                 .ConfigureServices((hostBuilderContext, serviceCollection) =>
                 {

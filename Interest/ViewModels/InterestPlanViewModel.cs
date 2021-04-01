@@ -22,7 +22,7 @@ namespace Interest.ViewModels
                 {
                     _isPlanUpdating = true;
                     var newCalculation = Calculate(Payments);
-                    foreach(var oldItem in Payments)
+                    foreach (var oldItem in Payments)
                     {
                         oldItem.PropertyChanged -= PaymentViewModel_PropertyChanged;
                     }

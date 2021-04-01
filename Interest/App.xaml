@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:Interest"
              xmlns:view="clr-namespace:Interest.Views"
              xmlns:vm="clr-namespace:Interest.ViewModels"
+             ShutdownMode="OnExplicitShutdown"
              >
     <Application.Resources>
         <vm:AboutViewModel x:Key="AboutViewModel" />
