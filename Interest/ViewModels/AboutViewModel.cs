@@ -11,22 +11,22 @@ namespace Interest.ViewModels
     {
         public AboutViewModel()
         {
-            _text = "About this application";
             _productName = "Interest Calculator";
-            _version = "1.0.0.0";
+            _aboutText = $"About the {_productName}";
+            _version = "Version 1.0.0.0";
             _copyright = "All rights reserved";
-            _companyName = "David Schaefer";
+            _author = "David Schaefer";
             _email = "codingdave@gmail.com";
-            _description = "This application helps understanding costs for interests and helps in creating payment plans";
+            _description = $"The {_productName} helps understanding costs for interests and helps in creating payment plans";
         }
 
-        #region Text
-        private string _text;
+        #region AboutText
+        private string _aboutText;
 
-        public string Text
+        public string AboutText
         {
-            get { return _text; }
-            set { _ = SetProperty(ref _text, value); }
+            get { return _aboutText; }
+            set { _ = SetProperty(ref _aboutText, value); }
         }
         #endregion
 
@@ -60,13 +60,13 @@ namespace Interest.ViewModels
         }
         #endregion
 
-        #region CompanyName
-        private string _companyName;
+        #region Author
+        private string _author;
 
-        public string CompanyName
+        public string Author
         {
-            get { return _companyName; }
-            set { _ = SetProperty(ref _companyName, value); }
+            get { return _author; }
+            set { _ = SetProperty(ref _author, value); }
         }
         #endregion
 
@@ -90,5 +90,11 @@ namespace Interest.ViewModels
         }
         #endregion
 
+        #region AuthorInfo
+        public string AuthorInfo
+        {
+            get { return $"{_author}, {_email}"; }
+        }
+        #endregion
     }
 }

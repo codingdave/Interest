@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Interest.Views;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Prism.DryIoc;
+using Prism.Ioc;
 using Serilog;
 using Serilog.Core;
 using System;
@@ -15,7 +18,7 @@ namespace Interest
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App : PrismApplication
     {
         private Logger _logger;
 
@@ -67,6 +70,20 @@ namespace Interest
                         System.Diagnostics.Debug.WriteLine($"{key}={value}");
                     }
                 });
+
+        protected override void RegisterTypes(IContainerRegistry containerRegistry)
+        {
+            //throw new NotImplementedException();
+            //containerRegistry.RegisterSingleton<ApplicationService>();
+            //containerRegistry.RegisterSingleton<CoreRoutines>();
+            //containerRegistry.RegisterSingleton<DialogService>();
+            containerRegistry.RegisterSingleton<LoggerConfiguration>();
+        }
+
+        protected override Window CreateShell()
+        {
+            return Container.Resolve<MainWindow>();
+        }
     }
 
 }

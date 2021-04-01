@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Interest.ViewModels;
+using Prism.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Interest
+namespace Interest.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -23,6 +25,19 @@ namespace Interest
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ICreateWindow icw)
+            {
+                icw.CreateWindow = () =>
+                {
+                    var v = new About();
+                    v.ShowDialog();
+                };
+            }
         }
     }
 }
