@@ -7,11 +7,10 @@ namespace Interest.ViewModels
 
     public class PaymentViewModel : BindableBase
     {
-        // Tilgungsrate 2.75%?
-        public PaymentViewModel(DateTime month, double monthlyPayment, double initialDebt, double borrowingRatePerYear, double unscheduledRepayment)
+        public PaymentViewModel(DateTime month, double monthlyPayment, double initialDebt, double BorrowingPercentagePerYear, double unscheduledRepayment)
         {
+            _payment = new Payment(month, monthlyPayment, initialDebt, BorrowingPercentagePerYear, unscheduledRepayment);
             if (ResidualDebt < 0) { throw new ArgumentOutOfRangeException("Residual Debt impossible"); }
-            _payment = new Payment(month, monthlyPayment, initialDebt, borrowingRatePerYear, unscheduledRepayment);
         }
 
         Payment _payment;
@@ -45,11 +44,11 @@ namespace Interest.ViewModels
 
         #endregion
 
-        #region BorrowingRatePerYear
-        public double BorrowingRatePerYear
+        #region BorrowingPercentagePerYear
+        public double BorrowingPercentagePerYear
         {
-            get { return _payment.BorrowingRatePerYear; }
-            set { SetProperty(ref _payment.BorrowingRatePerYear, value); }
+            get { return _payment.BorrowingPercentagePerYear; }
+            set { SetProperty(ref _payment.BorrowingPercentagePerYear, value); }
         }
 
         #endregion
@@ -63,9 +62,9 @@ namespace Interest.ViewModels
 
         #endregion
 
-        public double Interest => Calculator.GetInterest(ReducedDebt, BorrowingRate);
+        public double Interest => Calculator.GetInterest(ReducedDebt, BorrowingPercentage);
 
-        public double BorrowingRate => Calculator.GetBorrowingRatePerYear(BorrowingRatePerYear);
+        public double BorrowingPercentage => Calculator.GetBorrowingPercentagePerYear(BorrowingPercentagePerYear);
         public double Repayment => Calculator.GetRepayment(MonthlyPayment, Interest);
 
         public double ResidualDebt => Calculator.GetResidualDebt(ReducedDebt, Repayment);

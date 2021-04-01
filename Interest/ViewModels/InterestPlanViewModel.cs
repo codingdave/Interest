@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Prism.Commands;
 using Prism.Mvvm;
 
@@ -19,10 +15,10 @@ namespace Interest.ViewModels
                 var now = DateTime.Now;
                 StartMonth = new DateTime(now.Year, now.Month, 1);
 
-                UnscheduledRepaymentPercentage = 0.05;
-                BorrowingRate =  0.0084;
+                UnscheduledRepaymentPercentage = 5;
+                BorrowingPercentage = 0.84;
+                RedemptionPercentage = 2.75;
                 LoanAmount = 381000;
-                MonthlyPayment = 1139.83;
 
                 InitialPayments = Initialize();
                 Payments = Initialize();
@@ -42,7 +38,7 @@ namespace Interest.ViewModels
 
             var month = StartMonth;
             var endMonth = StartMonth.AddYears(Years);
-            var monthlyPayment = MonthlyPayment;
+            var monthlyPayment = RedemptionAmount;
 
             double unscheduledRepayment = 0;
             while (month < endMonth)
@@ -50,16 +46,16 @@ namespace Interest.ViewModels
                 month = month.AddMonths(1);
                 var residualDebt = ret.Any() ? ret.Last().ResidualDebt : LoanAmount;
 
-                var remainingDebtPlusRate = residualDebt + residualDebt * BorrowingRate / 12.0;
+                var remainingDebtPlusRate = residualDebt + residualDebt * BorrowingPercentage / 12.0;
                 if (remainingDebtPlusRate >= monthlyPayment)
                 {
-                    var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingRate, unscheduledRepayment);
+                    var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingPercentage, unscheduledRepayment);
                     ret.Add(p);
                 }
                 else
                 {
                     monthlyPayment = remainingDebtPlusRate;
-                    var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingRate, unscheduledRepayment);
+                    var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingPercentage, unscheduledRepayment);
                     ret.Add(p);
                     break;
                 }
@@ -71,22 +67,19 @@ namespace Interest.ViewModels
         {
             var ret = new List<PaymentViewModel>();
             var currentDebt = LoanAmount;
-            foreach (var p in Payments)
+            var month = StartMonth;
+            var endMonth = StartMonth.AddYears(Years);
+            int i = 0;
+            while (month < endMonth && currentDebt > 0)
             {
-                if (currentDebt <= 0)
-                {
-                    break;
-                }
-
-                var unscheduledRepayment = p.UnscheduledRepayment;
-                if (IsApplyAllUnscheduledRepayments && p.Month.Month == StartMonth.AddMonths(1).Month)
-                {
-                    unscheduledRepayment = GetRequiredAmount(InitialPayments.First().InitialDebt * UnscheduledRepaymentPercentage, currentDebt);
-                }
-
-                var payment = new PaymentViewModel(p.Month, GetRequiredAmount(MonthlyPayment, currentDebt - unscheduledRepayment), currentDebt, BorrowingRate, unscheduledRepayment);
+                var p = Payments.ElementAt(i);
+                var unscheduledRepayment = IsApplyAllUnscheduledRepayments && p.Month.Month == StartMonth.AddMonths(1).Month
+                    ? GetRequiredAmount(InitialPayments.First().InitialDebt * UnscheduledRepaymentPercentage, currentDebt)
+                    : p.UnscheduledRepayment;
+                var payment = new PaymentViewModel(p.Month, GetRequiredAmount(RedemptionAmount, currentDebt - unscheduledRepayment), currentDebt, BorrowingPercentage, unscheduledRepayment);
                 currentDebt = payment.ResidualDebt;
                 ret.Add(payment);
+                i++;
             }
 
             Payments = ret;
@@ -95,8 +88,8 @@ namespace Interest.ViewModels
         private double GetRequiredAmount(double maximumAmount, double currentDebt)
         {
             var c = currentDebt;
-            var nextRate = maximumAmount/* + (maximumAmount * BorrowingRate / 12)*/;
-            double ret = c >= nextRate ? maximumAmount : c /*+ (c * BorrowingRate  / 12)*/;
+            var nextRate = maximumAmount/* + (maximumAmount * BorrowingPercentage / 12)*/;
+            double ret = c >= nextRate ? maximumAmount : c /*+ (c * BorrowingPercentage  / 12)*/;
             return ret;
         }
 
@@ -111,6 +104,7 @@ namespace Interest.ViewModels
                 {
                     RaisePropertyChanged(nameof(TotalInterest));
                     RaisePropertyChanged(nameof(ResidualDebt));
+                    RaisePropertyChanged(nameof(RedemptionPercentage));
                 }
             }
         }
@@ -131,7 +125,6 @@ namespace Interest.ViewModels
             }
         }
 
-
         public double ResidualDebt
         {
             get
@@ -145,6 +138,34 @@ namespace Interest.ViewModels
             }
         }
 
+        #region RedemptionPercentage
+        private double _redemptionPercentage;
+
+        public double RedemptionPercentage
+        {
+            get { return _redemptionPercentage; }
+            set
+            {
+                if (SetProperty(ref _redemptionPercentage, value))
+                {
+                    RaisePropertyChanged(nameof(RedemptionAmount));
+                }
+            }
+        }
+        #endregion
+
+        public double RedemptionAmount
+        {
+            get
+            {
+                return LoanAmount * (BorrowingPercentage + RedemptionPercentage) / 100 / 12;
+            }
+            set
+            {
+                RedemptionPercentage = (value * 100 * 12 / LoanAmount) - BorrowingPercentage;
+            }
+        }
+
         #region StartMonth
         private DateTime _startMonth;
 
@@ -152,7 +173,7 @@ namespace Interest.ViewModels
         {
             get { return _startMonth; }
             set { SetProperty(ref _startMonth, value); }
-        } 
+        }
         #endregion
 
         #region UnscheduledRepaymentPercentage
@@ -186,12 +207,12 @@ namespace Interest.ViewModels
 
         #endregion
 
-        #region BorrowingRate
-        private double _borrowingRate;
-        public double BorrowingRate
+        #region BorrowingPercentage
+        private double _BorrowingPercentage;
+        public double BorrowingPercentage
         {
-            get { return _borrowingRate; }
-            set { SetProperty(ref _borrowingRate, value); }
+            get { return _BorrowingPercentage; }
+            set { SetProperty(ref _BorrowingPercentage, value); }
         }
         #endregion
 
@@ -204,17 +225,8 @@ namespace Interest.ViewModels
         }
         #endregion
 
-        #region MonthlyPayment
-        private double _monthlyPayment;
+
         private IEnumerable<PaymentViewModel> _payments;
-
-        public double MonthlyPayment
-        {
-            get { return _monthlyPayment; }
-            set { SetProperty(ref _monthlyPayment, value); }
-        } 
-        #endregion
-
         public DelegateCommand ResetCommand { get; private set; }
         public DelegateCommand UpdateCommand { get; private set; }
     }
