@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,9 +12,13 @@ namespace Interest.ViewModels
     {
         public AboutViewModel()
         {
+            //string assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            //string fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+            string productVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+
             _productName = "Interest Calculator";
-            _aboutText = $"About the {_productName}";
-            _version = "Version 1.0.0.0";
+            _aboutText = $"About";
+            _version = $"Version {productVersion}";
             _copyright = "All rights reserved";
             _author = "David Schaefer";
             _email = "codingdave@gmail.com";

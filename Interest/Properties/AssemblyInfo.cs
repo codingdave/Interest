@@ -18,9 +18,9 @@ using System.Runtime.InteropServices;
 [assembly: Guid("8198894b-609a-4f51-ad21-4fabe90234b9")]
 
 [assembly: AssemblyVersion(ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch)]
-//[assembly: AssemblyInformationalVersion(
-//  ThisAssembly.Git.SemVer.Major + "." +
-//  ThisAssembly.Git.SemVer.Minor + "." +
-//  ThisAssembly.Git.SemVer.Patch + "-" +
-//  ThisAssembly.Git.Branch + "+" +
-//  ThisAssembly.Git.Commit)]
+[assembly: AssemblyInformationalVersion(
+  ThisAssembly.Git.SemVer.Major + "." +
+  ThisAssembly.Git.SemVer.Minor + "." +
+  ThisAssembly.Git.SemVer.Patch + "-" +
+  ThisAssembly.Git.Branch + "+" +
+  ThisAssembly.Git.Commit)]
