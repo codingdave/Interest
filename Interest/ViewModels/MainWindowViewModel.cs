@@ -59,7 +59,9 @@ namespace Interest.ViewModels
 
         public double TotalInterest => InterestPlanViewModels.Select(a => a.TotalInterest).Aggregate((a, b) => a + b);
 
-        public double ResidualDebt => InterestPlanViewModels.Select(a => a.ResidualDebt).Aggregate((a, b) => a + b);
+        public double TotalInterest => InterestPlanViewModels.Count == 0 ? 0 : InterestPlanViewModels.Select(a => a.TotalInterest).Aggregate((a, b) => a + b);
+
+        public double ResidualDebt => InterestPlanViewModels.Count == 0 ? 0 : InterestPlanViewModels.Select(a => a.ResidualDebt).Aggregate((a, b) => a + b);
 
         public ICommand CreateWindowCommand { get; private set; }
         public Action CreateWindow { get; set; }
