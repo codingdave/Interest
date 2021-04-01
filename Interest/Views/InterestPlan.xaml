@@ -53,7 +53,7 @@
             <TextBox Text="{Binding StartMonth, StringFormat=d, ConverterCulture='de-DE'}" />
             <Label Content="Repayment Amount of initial sum:" />
             <TextBox Text="{Binding UnscheduledRepaymentPercentage, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" />
-            <CheckBox Content="Apply all possible extra repayments" IsChecked="{Binding IsApplyAllÚnscheduledRepayments}"/>
+            <CheckBox Content="Apply all possible extra repayments" IsChecked="{Binding IsApplyAllUnscheduledRepayments}"/>
         </StackPanel>
 
         <DataGrid ItemsSource="{Binding Payments}" Height="800" AutoGenerateColumns="False" CanUserAddRows="false">

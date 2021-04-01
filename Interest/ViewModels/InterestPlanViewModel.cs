@@ -14,15 +14,14 @@ namespace Interest.ViewModels
     {
         public InterestPlanViewModel()
         {
-            Payments = new List<PaymentViewModel>();
-            InitialPayments = new List<PaymentViewModel>();
 
             var now = DateTime.Now;
             _startMonth = new DateTime(now.Year, now.Month, 1);
 
             CreateCommand = new DelegateCommand(() =>
             {
-                Initialize();
+                InitialPayments = Initialize();
+                Payments = Initialize();
             });
 
             UpdateCommand = new DelegateCommand(() =>
@@ -33,7 +32,7 @@ namespace Interest.ViewModels
             CreateCommand.Execute();
         }
 
-        public void Initialize()
+        public IEnumerable<PaymentViewModel> Initialize()
         {
             var ret = new List<PaymentViewModel>();
 
@@ -61,8 +60,7 @@ namespace Interest.ViewModels
                     break;
                 }
             }
-
-            InitialPayments = ret;
+            return ret;
         }
 
         public void Update()
