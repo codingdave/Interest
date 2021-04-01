@@ -15,6 +15,7 @@ namespace Interest.ViewModels
                 var now = DateTime.Now;
                 StartMonth = new DateTime(now.Year, now.Month, 1);
 
+                Years = 20;
                 UnscheduledRepaymentPercentage = 5;
                 BorrowingPercentage = 0.84;
                 RedemptionPercentage = 2.75;
@@ -199,7 +200,7 @@ namespace Interest.ViewModels
         #endregion
 
         #region Years
-        private int _years = 20;
+        private int _years;
         public int Years
         {
             get { return _years; }
