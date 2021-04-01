@@ -3,7 +3,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:prism="http://prismlibrary.com/"
       xmlns:vm="clr-namespace:Interest.ViewModels"
       xmlns:model="clr-namespace:Interest.Models"
       xmlns:view="clr-namespace:Interest.Views"
@@ -138,7 +137,7 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=Interest, StringFormat=C2, ConverterCulture='de-DE'}" Header="Interest" IsReadOnly="True" />
                 <DataGridTextColumn Binding="{Binding Path=Repayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Repayment" IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Residual Debt" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Residual Debt" IsReadOnly="True" Width="*"/>
             </DataGrid.Columns>
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">

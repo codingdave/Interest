@@ -6,7 +6,6 @@
         xmlns:vm="clr-namespace:Interest.ViewModels"
         xmlns:view="clr-namespace:Interest.Views"
         xmlns:local="clr-namespace:Interest"
-        xmlns:prism="http://prismlibrary.com/"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -46,9 +45,9 @@
             <StackPanel>
                 <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Total Interest: "/>
-                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding TotalInterest, StringFormat=C2, ConverterCulture='de-DE'}" />
+                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding TotalInterest, StringFormat='{}{0:c}', ConverterCulture='de-DE'}" />
                     <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Residual Debt: " />
-                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" />
+                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding ResidualDebt, StringFormat=' {0:c}', ConverterCulture='de-DE'}" />
                 </WrapPanel>
 
                 <WrapPanel HorizontalAlignment="Center">
