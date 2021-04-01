@@ -5,31 +5,31 @@ namespace Interest.ViewModels
 {
     public class PaymentViewModel : ViewModelBase
     {
-        public PaymentViewModel(DateTime month, InputValue<double> payment, double debt, double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment, Action<object> calculateCommandExecute)
+        public PaymentViewModel(DateTime date, InputValue<double> payment, double debt, double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment, Action<object> calculateCommandExecute)
         {
             _calculateCommandExecute = calculateCommandExecute;
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
             var interest = Calculator.GetInterest(reducedDebt, borrowingPercentagePerYear);
-            _paymentModel = new PaymentModel(month, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
+            _paymentModel = new PaymentModel(date, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
         }
 
-        public PaymentViewModel(DateTime month, double debt, double borrowingPercentagePerYear, Action<object> calculateCommandExecute) // no repayment, interest cost only
+        public PaymentViewModel(DateTime date, double debt, double borrowingPercentagePerYear, Action<object> calculateCommandExecute) // no repayment, interest cost only
         {
             _calculateCommandExecute = calculateCommandExecute;
 
             var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
             var interest = Calculator.GetInterest(reducedDebt, borrowingPercentagePerYear);
-            _paymentModel = new PaymentModel(month, new InputValue<double>(interest, InputType.Auto), debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
+            _paymentModel = new PaymentModel(date, new InputValue<double>(interest, InputType.Auto), debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
         }
 
         PaymentModel _paymentModel;
         private Action<object> _calculateCommandExecute;
 
-        public DateTime Month
+        public DateTime Date
         {
-            get => _paymentModel.Month;
-            set => _ = SetProperty(ref _paymentModel.Month, value);
+            get => _paymentModel.Date;
+            set => _ = SetProperty(ref _paymentModel.Date, value);
         }
 
         public InputValue<double> Payment

@@ -1,5 +1,8 @@
-﻿using Interest.ViewModels;
+﻿using Interest.Options;
+using Interest.ViewModels;
+using System;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Interest.Views
 {
@@ -12,13 +15,22 @@ namespace Interest.Views
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
+            Closing += MainWindow_Closing;
+        }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if(DataContext is IOnClose ioc)
+            {
+                ioc.OnClose();
+            }
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is ICreateWindow icw)
             {
-                icw.CreateWindow = () =>
+                icw.OnLoaded = () =>
                 {
                     var v = new About();
                     v.ShowDialog();

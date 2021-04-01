@@ -1,13 +1,10 @@
-﻿using Interest.Options;
-using Interest.ViewModels;
+﻿using Interest.ViewModels;
 using Interest.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Windows;
 
 namespace Interest
@@ -21,6 +18,10 @@ namespace Interest
         {
             // Image size on startup
             // unit tests
+            // volltilger
+            // Jahre in Main 
+            // StartMonth in Main
+            // version in about, assemblyinfo.cs
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -31,30 +32,7 @@ namespace Interest
             var vm = host.Services.GetService<IMainWindowViewModel>();
             var mw = host.Services.GetService<MainWindow>();
             mw.DataContext = vm;
-            mw.Closing += Mw_Closing;
             mw.ShowDialog();
-            //host.RunAsync();
-            //return host.RunAsync();
-        }
-
-        private void Mw_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            var mw = (MainWindow)sender;
-            var vm = (MainWindowViewModel)mw.DataContext;
-            var options = new InterestOptions();
-            foreach (var m in vm.InterestPlanViewModels)
-            {
-                options.InterestPlans.Add(m.Values);
-            }
-
-            var joptions = new JsonSerializerOptions()
-            {
-                WriteIndented = true,
-                IncludeFields = true
-            };
-            var json = JsonSerializer.Serialize(options, joptions);
-
-            File.WriteAllText("appsettings.json", json);
         }
 
         static IHostBuilder CreateHostBuilder(string[] args) =>

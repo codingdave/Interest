@@ -12,7 +12,7 @@ namespace Interest.Models
             if (unscheduledRepayment.Value < 0) { throw new ArgumentOutOfRangeException("Negative unscheduled repayment given"); }
             if (interest < 0) { throw new ArgumentOutOfRangeException("No interest given"); }
 
-            Month = month;
+            Date = month;
             Debt = debt;
             BorrowingPercentagePerYear = borrowingPercentagePerYear;
             BorrowingPercentage = Calculator.GetBorrowingPercentage(BorrowingPercentagePerYear);
@@ -25,7 +25,7 @@ namespace Interest.Models
             ResidualDebt = Calculator.GetResidualDebt(ReducedDebt, Repayment);
         }
 
-        public DateTime Month;
+        public DateTime Date;
         public InputValue<double> Payment;
         public double BorrowingPercentagePerYear;
         public double Debt;

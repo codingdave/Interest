@@ -37,7 +37,7 @@
         <TabControl Grid.Row="1" Margin="5,1,5,1" ItemsSource="{Binding InterestPlanViewModels}" SelectedItem="{Binding SelectedInterestPlanViewModel}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Title}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
+                    <TextBlock Text="{Binding Lender}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
                 </DataTemplate>
             </TabControl.ItemTemplate>
         </TabControl>

@@ -11,6 +11,10 @@
         d:DataContext="{d:DesignInstance Type=vm:AboutViewModel, IsDesignTimeCreatable=True}"
         Title="{Binding AboutText}"
         >
+    <Window.DataContext>
+        <vm:AboutViewModel/>
+    </Window.DataContext>
+    
     <StackPanel>
         <TextBlock Margin="10,5,10,5" HorizontalAlignment="Left" FontSize="16" Text="{Binding Description}"/>
         <StackPanel Orientation="Horizontal">
