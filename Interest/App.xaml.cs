@@ -4,8 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Prism.DryIoc;
-using Prism.Ioc;
 using System;
 using System.Configuration;
 using System.IO;
@@ -18,10 +16,18 @@ namespace Interest
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : PrismApplication
+    public partial class App : Application
     {
         public App()
         {
+            var c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var r = new ConfigurationManagerReaderWriter(c);
+            var w = new MainWindow();
+            w.DataContext = new MainWindowViewModel(r);
+            w.WindowState = WindowState.Maximized;
+            w.WindowStyle = WindowStyle.SingleBorderWindow;
+            w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            w.ShowDialog();
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -41,10 +47,6 @@ namespace Interest
                     configurationBuilder
                         .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: true)
                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                        .AddIniFile($"appsettings.ini", optional: true, reloadOnChange: true)
-                        .AddIniFile($"appsettings.{env.EnvironmentName}.ini", optional: true, reloadOnChange: true)
-                        .AddXmlFile($"appsettings.xml", optional: true, reloadOnChange: true)
-                        .AddXmlFile($"repeating-example.xml", optional: true, reloadOnChange: true)
                         .AddEnvironmentVariables(prefix: "CustomPrefix_")
                     ;
 
@@ -62,39 +64,39 @@ namespace Interest
                     }
                 });
 
-        protected override void RegisterTypes(IContainerRegistry containerRegistry)
-        {
-            //containerRegistry.RegisterSingleton<ApplicationService>();
-            //containerRegistry.RegisterSingleton<CoreRoutines>();
-            //containerRegistry.RegisterSingleton<DialogService>();
+        //protected override void RegisterTypes(IContainerRegistry containerRegistry)
+        //{
+        //    //containerRegistry.RegisterSingleton<ApplicationService>();
+        //    //containerRegistry.RegisterSingleton<CoreRoutines>();
+        //    //containerRegistry.RegisterSingleton<DialogService>();
 
-            // Configure Serilog and the sinks at the startup of the app
-            //var logger = new LoggerConfiguration()
-            //    .MinimumLevel.Debug()
-            //    .WriteTo.Console()
-            //    .WriteTo.File(path: "MyApp.log", encoding: Encoding.UTF8)
-            //    .CreateLogger();
-            // Register Serilog with Prism
-            //containerRegistry.RegisterSerilog(logger);
+        //    // Configure Serilog and the sinks at the startup of the app
+        //    //var logger = new LoggerConfiguration()
+        //    //    .MinimumLevel.Debug()
+        //    //    .WriteTo.Console()
+        //    //    .WriteTo.File(path: "MyApp.log", encoding: Encoding.UTF8)
+        //    //    .CreateLogger();
+        //    // Register Serilog with Prism
+        //    //containerRegistry.RegisterSerilog(logger);
 
-            containerRegistry
-                .RegisterSingleton<Configuration>(() =>
-                {
-                    return ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                })
-                .RegisterSingleton<ConfigurationManagerReaderWriter>();
-        }
+        //    containerRegistry
+        //        .RegisterSingleton<Configuration>(() =>
+        //        {
+        //            return ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        //        })
+        //        .RegisterSingleton<ConfigurationManagerReaderWriter>();
+        //}
 
-        protected override Window CreateShell()
-        {
-            var vm = Container.Resolve<MainWindowViewModel>();
-            var w = Container.Resolve<MainWindow>();
-            w.DataContext = vm;
-            w.WindowState = WindowState.Maximized;
-            w.WindowStyle = WindowStyle.SingleBorderWindow;
-            w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            return w;
-        }
+        //protected override Window CreateShell()
+        //{
+        //    var vm = Container.Resolve<MainWindowViewModel>();
+        //    var w = Container.Resolve<MainWindow>();
+        //    w.DataContext = vm;
+        //    w.WindowState = WindowState.Maximized;
+        //    w.WindowStyle = WindowStyle.SingleBorderWindow;
+        //    w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        //    return w;
+        //}
     }
 
 }

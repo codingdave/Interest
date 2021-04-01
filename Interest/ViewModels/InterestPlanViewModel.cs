@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Interest.Commands;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Prism.Commands;
-using Prism.Mvvm;
 
 namespace Interest.ViewModels
 {
-    public class InterestPlanViewModel : BindableBase
+    public class InterestPlanViewModel : ViewModelBase
     {
         private ConfigurationManagerReaderWriter _conf;
 

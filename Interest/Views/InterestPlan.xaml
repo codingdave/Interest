@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:prism="http://prismlibrary.com/"
-      prism:ViewModelLocator.AutoWireViewModel="False"
       xmlns:vm="clr-namespace:Interest.ViewModels"
       xmlns:model="clr-namespace:Interest.Models"
       xmlns:view="clr-namespace:Interest.Views"

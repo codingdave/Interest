@@ -1,12 +1,11 @@
 ﻿using Interest.Models;
-using Prism.Mvvm;
 using System;
 
 namespace Interest.ViewModels
 {
-    public class PaymentViewModel : BindableBase
+    public class PaymentViewModel : ViewModelBase
     {
-        public PaymentViewModel(DateTime month, InputValue<double> payment, double debt, double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment, Action calculateCommandExecute)
+        public PaymentViewModel(DateTime month, InputValue<double> payment, double debt, double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment, Action<object> calculateCommandExecute)
         {
             _calculateCommandExecute = calculateCommandExecute;
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
@@ -14,7 +13,7 @@ namespace Interest.ViewModels
             _paymentModel = new PaymentModel(month, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
         }
 
-        public PaymentViewModel(DateTime month, double debt, double borrowingPercentagePerYear, Action calculateCommandExecute) // no repayment, interest cost only
+        public PaymentViewModel(DateTime month, double debt, double borrowingPercentagePerYear, Action<object> calculateCommandExecute) // no repayment, interest cost only
         {
             _calculateCommandExecute = calculateCommandExecute;
 
@@ -25,7 +24,7 @@ namespace Interest.ViewModels
         }
 
         PaymentModel _paymentModel;
-        private Action _calculateCommandExecute;
+        private Action<object> _calculateCommandExecute;
 
         public DateTime Month
         {
@@ -40,7 +39,7 @@ namespace Interest.ViewModels
             {
                 if (SetProperty(ref _paymentModel.Payment, value))
                 {
-                    _calculateCommandExecute?.Invoke();
+                    _calculateCommandExecute?.Invoke(this);
                 }
             }
         }
@@ -52,7 +51,7 @@ namespace Interest.ViewModels
             {
                 if (SetProperty(ref _paymentModel.Debt, value))
                 {
-                    _calculateCommandExecute?.Invoke();
+                    _calculateCommandExecute?.Invoke(this);
                 }
             }
         }
@@ -64,7 +63,7 @@ namespace Interest.ViewModels
             {
                 if (SetProperty(ref _paymentModel.BorrowingPercentagePerYear, value))
                 {
-                    _calculateCommandExecute?.Invoke();
+                    _calculateCommandExecute?.Invoke(this);
                 }
             }
         }
@@ -76,7 +75,7 @@ namespace Interest.ViewModels
             {
                 if (SetProperty(ref _paymentModel.UnscheduledRepayment, value))
                 {
-                    _calculateCommandExecute?.Invoke();
+                    _calculateCommandExecute?.Invoke(this);
                 }
             }
         }

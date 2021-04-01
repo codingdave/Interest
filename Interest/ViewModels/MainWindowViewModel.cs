@@ -1,5 +1,4 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
+﻿using Interest.Commands;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Windows.Input;
 
 namespace Interest.ViewModels
 {
-    public class MainWindowViewModel : BindableBase, ICreateWindow
+    public class MainWindowViewModel : ViewModelBase, ICreateWindow
     {
         public MainWindowViewModel(ConfigurationManagerReaderWriter reader)
         {
