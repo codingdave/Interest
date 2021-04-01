@@ -19,6 +19,9 @@ namespace Interest
     {
         public App()
         {
+            // validation
+            // Culture title
+            // scheint so zu sein, dass die _redemptionPercentage und borrowingrate in der UI verwechselt sind
             // create options menu, place language there 
             // classes for percentage, currency, fraction?
             // MainWindow: Years, StartMonth
@@ -51,7 +54,6 @@ namespace Interest
 
         static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                //.UseConsoleLifetime()
                 .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
                 {
                     IHostEnvironment env = hostBuilderContext.HostingEnvironment;
@@ -83,8 +85,8 @@ namespace Interest
                 .ConfigureServices((hostBuilderContext, serviceCollection) =>
                 {
                     serviceCollection
-                        .AddTransient<MainWindowViewModel>()
-                        .AddTransient<MainWindow>()
+                        .AddSingleton<MainWindowViewModel>()
+                        .AddSingleton<MainWindow>()
                         ;
                     //serviceCollection
                     //.AddTransient<ITransientOperation, TransientOperation>()

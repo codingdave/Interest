@@ -116,7 +116,12 @@ namespace Interest.ViewModels
         #region RedemptionPercentage
         public double RedemptionPercentage
         {
-            get { return Values._redemptionPercentage; }
+            get
+            {
+                return IsFullRepayment ?
+                  Payments.Last().BorrowingPercentagePerYear :
+                  Values.RedemptionPercentage;
+            }
             set
             {
                 if (SetProperty(ref Values._redemptionPercentage, value))
@@ -216,9 +221,7 @@ namespace Interest.ViewModels
         {
             get
             {
-                return IsFullRepayment ?
-                  Payments.Last().BorrowingPercentagePerYear :
-                  Values.BorrowingPercentagePerYear;
+                return Values.BorrowingPercentagePerYear;
             }
             set
             {
