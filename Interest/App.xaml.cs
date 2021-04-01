@@ -19,6 +19,7 @@ namespace Interest
     {
         public App()
         {
+            // update MWVM: TotalInterest and ResidualDebt whenever the tabs value change
             // validation
             // scheint so zu sein, dass die _redemptionPercentage und borrowingrate in der UI verwechselt sind
             // create options menu, place language there 

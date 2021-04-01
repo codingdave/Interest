@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=System.Core"
         xmlns:vm="clr-namespace:Interest.ViewModels"
         xmlns:view="clr-namespace:Interest.Views"
         xmlns:converters="clr-namespace:Interest.Converters"
@@ -22,6 +23,8 @@
         <DataTemplate DataType="{x:Type vm:InterestPlanViewModel}">
             <view:InterestPlan/>
         </DataTemplate>
+        <sys:Int32 x:Key="Int0">0</sys:Int32>
+        <sys:Int32 x:Key="Int1">1</sys:Int32>
     </Window.Resources>
 
     <Grid HorizontalAlignment="Stretch">
@@ -44,7 +47,7 @@
 
         <TabControl Grid.Row="2" Margin="5 1 5 1" ItemsSource="{Binding InterestPlanViewModels}" 
                     SelectedIndex="{Binding SelectedInterestPlanViewModelIndex}"
-            Visibility="{Binding InterestPlanViewModels, Converter={StaticResource countToVisibilityConverter}, ConverterParameter=0}">
+            Visibility="{Binding InterestPlanViewModels.Count, Converter={StaticResource countToVisibilityConverter}, ConverterParameter={StaticResource Int0}}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Lender}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
@@ -53,7 +56,7 @@
         </TabControl>
 
         <Border Grid.Row="3" Margin="5 1 5 1" Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="3"
-            Visibility="{Binding InterestPlanViewModels, Converter={StaticResource countToVisibilityConverter}, ConverterParameter=1}">
+            Visibility="{Binding InterestPlanViewModels.Count, Converter={StaticResource countToVisibilityConverter}, ConverterParameter={StaticResource Int1}}">
             <StackPanel>
                 <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Padding="5 0 5 0" Margin="10 10 10 10" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=TotalInterest, StringFormat=Total Interest: {0:C}, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}"/>

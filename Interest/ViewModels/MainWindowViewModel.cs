@@ -58,9 +58,8 @@ namespace Interest.ViewModels
 
         private void InterestPlanViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            //RaisePropertyChanged(nameof(InterestPlanViewModels));
-            //RaisePropertyChanged(nameof(TotalInterest));
-            //RaisePropertyChanged(nameof(ResidualDebt));
+            RaisePropertyChanged(nameof(TotalInterest));
+            RaisePropertyChanged(nameof(ResidualDebt));
         }
 
         public double TotalInterest => InterestPlanViewModels.Count == 0 ? 0 : InterestPlanViewModels.Select(a => a.TotalInterest).Aggregate((a, b) => a + b);

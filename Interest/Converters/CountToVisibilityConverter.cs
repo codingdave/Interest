@@ -11,16 +11,15 @@ namespace Interest.Converters
 {
     public class CountToVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object value, Type targetType, object min, CultureInfo culture)
         {
             var ret = Visibility.Collapsed;
 
-            var container = (IEnumerable<InterestPlanViewModel>)value;
-            if (int.TryParse((string)parameter, out int min) && container.Count() > min)
+            var val = (int)value;
+            if (val > (int)min)
             {
                 ret = Visibility.Visible;
             }
-
             return ret;
         }
 
