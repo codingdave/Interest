@@ -1,4 +1,5 @@
 ﻿using Interest.Models;
+using Interest.Options;
 using Interest.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Interest.Tests
         [Fact]
         public void Properties()
         {
-            var plan = new InterestPlanViewModel();
+            var plan = new InterestPlanViewModel(InterestPlanViewModelOptions.GetDefault());
 
             var starMonth = DateTime.Now;
             var loanAmount = 100.0;
@@ -41,7 +42,7 @@ namespace Interest.Tests
         [Fact]
         public void UpdateKeepsProperties()
         {
-            var plan = new InterestPlanViewModel();
+            var plan = new InterestPlanViewModel(InterestPlanViewModelOptions.GetDefault());
 
             var starMonth = DateTime.Now;
             var loanAmount = 100.0;
@@ -57,7 +58,7 @@ namespace Interest.Tests
             plan.Years = years;
             plan.UnscheduledRepaymentPercentage = unscheduledRepaymentPercentage;
 
-            plan.Update();
+            plan.Calculate();
 
             Assert.Equal(years, plan.Years);
             Assert.Equal(starMonth, plan.StartMonth);
@@ -71,7 +72,7 @@ namespace Interest.Tests
         [Fact]
         public void InitializeKeepsProperties()
         {
-            var plan = new InterestPlanViewModel();
+            var plan = new InterestPlanViewModel(InterestPlanViewModelOptions.GetDefault());
 
             var starMonth = DateTime.Now;
             var loanAmount = 100.0;

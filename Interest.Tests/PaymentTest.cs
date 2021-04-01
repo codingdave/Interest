@@ -17,10 +17,10 @@ namespace Interest.Tests
             var date = new DateTime(2020, 04, 01);
             var unscheduledRepayment = new InputValue<double>(unscheduledRepaymentValue, InputType.Auto);
             var reducedDebt = Calculator.GetReducedDebt(initialDebt, unscheduledRepayment);
-            var interest = Calculator.GetInterest(reducedDebt, borrowingPercentagePerYear);
+            var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowingPercentagePerYear);
 
             var p = new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), initialDebt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
-            Assert.Equal(date, p.Month);
+            Assert.Equal(date, p.Date);
             Assert.Equal(monthlyPayment, p.Payment.Value);
             Assert.Equal(initialDebt, p.Debt);
         }
