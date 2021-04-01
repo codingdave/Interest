@@ -16,12 +16,9 @@ namespace Interest
     {
         public App()
         {
-            // index
-            // Image size on startup
-            // unit tests
-            // volltilger
-            // Jahre in Main 
-            // StartMonth in Main
+            // MainWindow: Years, StartMonth
+            // GridView: Show Index for month
+            // Splash image, size, position
             // obfuscation
         }
 
