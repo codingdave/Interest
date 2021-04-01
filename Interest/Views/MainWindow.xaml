@@ -52,7 +52,7 @@
                 </WrapPanel>
 
                 <WrapPanel HorizontalAlignment="Center">
-                    <Button Padding="5 0 5 0" Margin="10 10 10 10" Content="Calculate All" Command="{Binding CalculateAllCommand}"/>
+                    <Button Padding="5 0 5 0" Margin="10 10 10 10" Content="Reset All" Command="{Binding ResetAllCommand}"/>
                 </WrapPanel>
             </StackPanel>
         </Border>

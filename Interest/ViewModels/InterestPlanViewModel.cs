@@ -9,77 +9,41 @@ namespace Interest.ViewModels
 {
     public class InterestPlanViewModel : BindableBase
     {
+        private ConfigurationManagerReaderWriter _conf;
+
+        private IEnumerable<PaymentViewModel> _payments;
+
         public InterestPlanViewModel(string title = null)
         {
+            _conf = new ConfigurationManagerReaderWriter();
+
             Title = title;
 
-            _conf = new ConfigurationManagerReaderWriter();
-            StartMonth = DateTime.Parse(_conf.GetValue(nameof(StartMonth)), CultureInfo.InvariantCulture);
-            Years = int.Parse(_conf.GetValue(nameof(Years)), CultureInfo.InvariantCulture);
-            UnscheduledRepaymentPercentage = double.Parse(_conf.GetValue(nameof(UnscheduledRepaymentPercentage)), CultureInfo.InvariantCulture);
-            BorrowingPercentagePerYear = double.Parse(_conf.GetValue(nameof(BorrowingPercentagePerYear)), CultureInfo.InvariantCulture);
-            RedemptionPercentage = double.Parse(_conf.GetValue(nameof(RedemptionPercentage)), CultureInfo.InvariantCulture);
-            LoanAmount = double.Parse(_conf.GetValue(nameof(LoanAmount)), CultureInfo.InvariantCulture);
+            CalculateCommand = new DelegateCommand(() => Payments = Calculate());
+            ResetCommand = new DelegateCommand(() => ResetAllInputValues());
 
-            CalculateCommand = new DelegateCommand(() =>
-            {
-                Payments = Calculate();
-            });
+            _startMonth = DateTime.Parse(_conf.GetValue(nameof(StartMonth)), CultureInfo.InvariantCulture);
+            _years = int.Parse(_conf.GetValue(nameof(Years)), CultureInfo.InvariantCulture);
+            _unscheduledRepaymentPercentage = double.Parse(_conf.GetValue(nameof(UnscheduledRepaymentPercentage)), CultureInfo.InvariantCulture);
+            _borrowingPercentagePerYear = double.Parse(_conf.GetValue(nameof(BorrowingPercentagePerYear)), CultureInfo.InvariantCulture);
+            _redemptionPercentage = double.Parse(_conf.GetValue(nameof(RedemptionPercentage)), CultureInfo.InvariantCulture);
+            _loanAmount = double.Parse(_conf.GetValue(nameof(LoanAmount)), CultureInfo.InvariantCulture);
 
             CalculateCommand.Execute();
         }
 
-        public IEnumerable<PaymentViewModel> Calculate()
+        private void ResetAllInputValues()
         {
-            var ret = new List<PaymentViewModel>();
-
-            var month = StartMonth;
-            var endMonth = StartMonth.AddYears(Years);
-            var monthlyPayment = RedemptionAmount;
-            var residualDebt = LoanAmount;
-            var redemptionFreeMonths = RedemptionFreeMonths;
-            while (month < endMonth && residualDebt > 0)
+            foreach (var p in Payments)
             {
-                month = month.AddMonths(1);
-
-                PaymentViewModel p;
-                if (ret.Count < redemptionFreeMonths)
-                {
-                    p = new PaymentViewModel(month, residualDebt, BorrowingPercentagePerYear);
-                }
-                else
-                {
-                    UnscheduledRepayment unscheduledRepayment = default;
-                    if (IsApplyAllUnscheduledRepayments && month.Month == StartMonth.AddMonths(1).Month)
-                    {
-                        // on optimize we override everythings
-                        unscheduledRepayment = new UnscheduledRepayment(GetRequiredAmount(LoanAmount * UnscheduledRepaymentPercentage / 100.0, residualDebt), InputType.Auto);
-                    }
-                    else
-                    {
-                        if (Payments?.Count() > ret.Count)
-                        {
-                            // else we keep manual edits
-                            var o = Payments.ElementAt(ret.Count).UnscheduledRepayment;
-                            if (o.InputType == InputType.Manual)
-                            {
-                                unscheduledRepayment = o;
-                            }
-                        }
-                    }
-                    p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingPercentagePerYear, unscheduledRepayment);
-                }
-
-                ret.Add(p);
-                residualDebt = p.ResidualDebt;
+                p.Payment = new InputValue<double>(p.Payment.Value, InputType.Auto);
+                p.UnscheduledRepayment = new InputValue<double>(p.UnscheduledRepayment.Value, InputType.Auto);
             }
-            return ret;
+            CalculateCommand.Execute();
         }
 
-        private static double GetRequiredAmount(double maximumAmount, double currentDebt)
-        {
-            return Math.Min(maximumAmount, currentDebt);
-        }
+        public DelegateCommand CalculateCommand { get; private set; }
+        public DelegateCommand ResetCommand { get; }
 
         public IEnumerable<PaymentViewModel> Payments
         {
@@ -92,6 +56,32 @@ namespace Interest.ViewModels
                     RaisePropertyChanged(nameof(ResidualDebt));
                     RaisePropertyChanged(nameof(RedemptionPercentage));
                 }
+            }
+        }
+
+        public double RedemptionAmount
+        {
+            get
+            {
+                return LoanAmount * (BorrowingPercentagePerYear + RedemptionPercentage) / 100.0 / 12.0;
+            }
+            set
+            {
+                RedemptionPercentage = (value * 100.0 * 12.0 / LoanAmount) - BorrowingPercentagePerYear;
+                CalculateCommand.Execute();
+            }
+        }
+
+        public double ResidualDebt
+        {
+            get
+            {
+                var ret = LoanAmount;
+                if (Payments.Any())
+                {
+                    ret = Payments.Last().ResidualDebt;
+                }
+                return ret;
             }
         }
 
@@ -111,17 +101,50 @@ namespace Interest.ViewModels
             }
         }
 
-        public double ResidualDebt
+        public IEnumerable<PaymentViewModel> Calculate()
         {
-            get
+            var ret = new List<PaymentViewModel>();
+
+            var month = StartMonth;
+            var endMonth = StartMonth.AddYears(Years);
+            InputValue<double> unscheduledRepayment = default;
+            InputValue<double> payment = default;
+            var residualDebt = LoanAmount;
+            var redemptionFreeMonths = RedemptionFreeMonths;
+            while (month < endMonth && residualDebt > 0)
             {
-                var ret = LoanAmount;
-                if (Payments.Any())
+                month = month.AddMonths(1);
+
+                PaymentViewModel p;
+                if (ret.Count < redemptionFreeMonths)
                 {
-                    ret = Payments.Last().ResidualDebt;
+                    // we only pay interest, no redemption
+                    p = new PaymentViewModel(month, residualDebt, BorrowingPercentagePerYear, CalculateCommand.Execute);
                 }
-                return ret;
+                else
+                {
+                    if (Payments?.Count() > ret.Count)
+                    {
+                        // we keep manual modifications
+                        var oldPayment = Payments.ElementAt(ret.Count);
+                        unscheduledRepayment = oldPayment.UnscheduledRepayment.InputType == InputType.Manual ? oldPayment.UnscheduledRepayment : default;
+                        payment = oldPayment.Payment.InputType == InputType.Manual ? oldPayment.Payment : new InputValue<double>(RedemptionAmount, InputType.Auto);
+                    }
+
+                    if (unscheduledRepayment.InputType == InputType.Auto && IsApplyAllUnscheduledRepayments && month.Month == StartMonth.AddMonths(1).Month)
+                    {
+                        // on optimize we override everythings
+                        unscheduledRepayment = new InputValue<double>(LoanAmount * UnscheduledRepaymentPercentage / 100.0, InputType.Auto);
+                    }
+                    unscheduledRepayment = new InputValue<double>(Math.Min(unscheduledRepayment.Value, residualDebt), unscheduledRepayment.InputType);
+
+                    p = new PaymentViewModel(month, payment, residualDebt, BorrowingPercentagePerYear, unscheduledRepayment, CalculateCommand.Execute);
+                }
+
+                ret.Add(p);
+                residualDebt = p.ResidualDebt;
             }
+            return ret;
         }
 
         #region RedemptionPercentage
@@ -135,23 +158,13 @@ namespace Interest.ViewModels
                 if (SetProperty(ref _redemptionPercentage, value))
                 {
                     RaisePropertyChanged(nameof(RedemptionAmount));
+
                     _conf.AddUpdateAppSettings(nameof(RedemptionPercentage), value.ToString());
+                    CalculateCommand.Execute();
                 }
             }
         }
         #endregion
-
-        public double RedemptionAmount
-        {
-            get
-            {
-                return LoanAmount * (BorrowingPercentagePerYear + RedemptionPercentage) / 100.0 / 12.0;
-            }
-            set
-            {
-                RedemptionPercentage = (value * 100.0 * 12.0 / LoanAmount) - BorrowingPercentagePerYear;
-            }
-        }
 
         #region StartMonth
         private DateTime _startMonth;
@@ -164,6 +177,7 @@ namespace Interest.ViewModels
                 if (SetProperty(ref _startMonth, value))
                 {
                     _conf.AddUpdateAppSettings(nameof(StartMonth), value.ToString());
+                    CalculateCommand.Execute();
                 }
             }
         }
@@ -180,6 +194,7 @@ namespace Interest.ViewModels
                 if (SetProperty(ref _redemptionFreeMonths, value))
                 {
                     _conf.AddUpdateAppSettings(nameof(RedemptionFreeMonths), value.ToString());
+                    CalculateCommand.Execute();
                 }
             }
         }
@@ -196,6 +211,7 @@ namespace Interest.ViewModels
                 if (SetProperty(ref _unscheduledRepaymentPercentage, value))
                 {
                     _conf.AddUpdateAppSettings(nameof(UnscheduledRepaymentPercentage), value.ToString());
+                    CalculateCommand.Execute();
                 }
             }
         }
@@ -207,7 +223,13 @@ namespace Interest.ViewModels
         public bool IsApplyAllUnscheduledRepayments
         {
             get { return _isApplyAllUnscheduledRepayments; }
-            set { _isApplyAllUnscheduledRepayments = value; }
+            set
+            {
+                if (SetProperty(ref _isApplyAllUnscheduledRepayments, value))
+                {
+                    CalculateCommand.Execute();
+                }
+            }
         }
 
         #endregion
@@ -222,6 +244,7 @@ namespace Interest.ViewModels
                 if (SetProperty(ref _years, value))
                 {
                     _conf.AddUpdateAppSettings(nameof(Years), value.ToString());
+                    CalculateCommand.Execute();
                 }
             }
         }
@@ -229,15 +252,16 @@ namespace Interest.ViewModels
         #endregion
 
         #region BorrowingPercentagePerYear
-        private double _BorrowingPercentagePerYear;
+        private double _borrowingPercentagePerYear;
         public double BorrowingPercentagePerYear
         {
-            get { return _BorrowingPercentagePerYear; }
+            get { return _borrowingPercentagePerYear; }
             set
             {
-                if (SetProperty(ref _BorrowingPercentagePerYear, value))
+                if (SetProperty(ref _borrowingPercentagePerYear, value))
                 {
                     _conf.AddUpdateAppSettings(nameof(BorrowingPercentagePerYear), value.ToString());
+                    CalculateCommand.Execute();
                 }
             }
         }
@@ -253,13 +277,11 @@ namespace Interest.ViewModels
                 if (SetProperty(ref _loanAmount, value))
                 {
                     _conf.AddUpdateAppSettings(nameof(LoanAmount), value.ToString());
+                    CalculateCommand.Execute();
                 }
             }
         }
         #endregion
-
-
-        private IEnumerable<PaymentViewModel> _payments;
 
         #region Title
         private string _title;
@@ -269,10 +291,5 @@ namespace Interest.ViewModels
             set => _ = SetProperty(ref _title, value);
         }
         #endregion
-
-
-        private ConfigurationManagerReaderWriter _conf;
-
-        public DelegateCommand CalculateCommand { get; private set; }
     }
 }

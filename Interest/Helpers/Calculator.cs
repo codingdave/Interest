@@ -28,7 +28,7 @@ namespace Interest
             return Math.Max(reducedDebt - repayment, 0);
         }
 
-        public static double GetReducedDebt(double initialDebt, UnscheduledRepayment unscheduledRepayment)
+        public static double GetReducedDebt(double initialDebt, InputValue<double> unscheduledRepayment)
         {
             return initialDebt - unscheduledRepayment.Value;
         }

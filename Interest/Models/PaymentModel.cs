@@ -2,11 +2,11 @@
 
 namespace Interest.Models
 {
-    public struct Payment
+    public struct PaymentModel
     {
-        public Payment(DateTime month, double monthlyPayment, double debt, double borrowingPercentagePerYear, UnscheduledRepayment unscheduledRepayment, double reducedDebt, double interest)
+        public PaymentModel(DateTime month, InputValue<double> payment, double debt, double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment, double reducedDebt, double interest)
         {
-            if (monthlyPayment < 0) { throw new ArgumentOutOfRangeException("No mothly payment given"); }
+            if (payment.Value < 0) { throw new ArgumentOutOfRangeException("No payment given"); }
             if (debt <= 0) { throw new ArgumentOutOfRangeException("No Debt given"); }
             if (borrowingPercentagePerYear <= 0) { throw new ArgumentOutOfRangeException("No Borrowing Rate per year given"); }
             if (unscheduledRepayment.Value < 0) { throw new ArgumentOutOfRangeException("Negative unscheduled repayment given"); }
@@ -20,16 +20,16 @@ namespace Interest.Models
             ReducedDebt = reducedDebt;
             Interest = interest;
 
-            MonthlyPayment = Math.Min(monthlyPayment, debt + Interest);
-            Repayment = Calculator.GetRepayment(MonthlyPayment, Interest);
+            Payment = new InputValue<double>(Math.Min(payment.Value, debt + Interest), payment.InputType);
+            Repayment = Calculator.GetRepayment(Payment.Value, Interest);
             ResidualDebt = Calculator.GetResidualDebt(ReducedDebt, Repayment);
         }
 
         public DateTime Month;
-        public double MonthlyPayment;
+        public InputValue<double> Payment;
         public double BorrowingPercentagePerYear;
         public double Debt;
-        public UnscheduledRepayment UnscheduledRepayment;
+        public InputValue<double> UnscheduledRepayment;
         public double Interest;
 
         public double BorrowingPercentage { get; }

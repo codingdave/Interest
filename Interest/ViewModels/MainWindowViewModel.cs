@@ -16,6 +16,8 @@ namespace Interest.ViewModels
             CreateWindowCommand = new DelegateCommand(() => CreateWindow?.Invoke());
             AddInterestPlanCommand = new DelegateCommand(() => InterestPlanViewModels.Add(new InterestPlanViewModel("...")));
 
+            ResetAllCommand = new DelegateCommand(() => InterestPlanViewModels.ToList().ForEach(ip => ip.ResetCommand.Execute()));
+
             CalculateAllCommand = new DelegateCommand(() =>
             {
                 InterestPlanViewModels.ToList().ForEach(ip => ip.CalculateCommand.Execute());
@@ -41,6 +43,7 @@ namespace Interest.ViewModels
         #endregion
 
         public ICommand AddInterestPlanCommand { get; set; }
+        public DelegateCommand ResetAllCommand { get; }
         public DelegateCommand CalculateAllCommand { get; }
     }
 }

@@ -36,7 +36,7 @@
             <Setter Property="HorizontalAlignment" Value="Right" />
         </Style>
         <local:PercentageConverter x:Key="percentageConverter" />
-        <local:UnscheduledRepaymentConverter x:Key="unscheduledRepaymentConverter"/>
+        <local:InputValueConverter x:Key="InputValue"/>
     </UserControl.Resources>
 
     <Grid Margin="10">
@@ -80,16 +80,14 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Month, StringFormat=d, ConverterCulture='de-DE'}" Header="Month" FontWeight="Light" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Path=Debt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Remaining Debt" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path=UnscheduledRepayment, StringFormat=C2, ConverterCulture='de-DE', Mode=TwoWay, Converter={StaticResource unscheduledRepaymentConverter}}" Header="Unscheduled Repayment">
+                <DataGridTextColumn Binding="{Binding Path=UnscheduledRepayment, StringFormat=C2, ConverterCulture='de-DE', Mode=TwoWay, Converter={StaticResource InputValue}}" Header="Unscheduled Repayment">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding UnscheduledRepayment, Converter={StaticResource unscheduledRepaymentConverter}}" Value="False">
-                                    <!--<Setter Property="Background" Value="White"/>-->
+                                <DataTrigger Binding="{Binding UnscheduledRepayment, Converter={StaticResource InputValue}}" Value="False">
                                     <Setter Property="FontWeight" Value="Normal"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding UnscheduledRepayment, Converter={StaticResource unscheduledRepaymentConverter}}" Value="True">
-                                    <!--<Setter Property="Background" Value="#FFEFEFEF"/>-->
+                                <DataTrigger Binding="{Binding UnscheduledRepayment, Converter={StaticResource InputValue}}" Value="True">
                                     <Setter Property="FontWeight" Value="Heavy"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -97,7 +95,20 @@
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=ReducedDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Reduced Debt" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path=MonthlyPayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Payment" />
+                <DataGridTextColumn Binding="{Binding Path=Payment, StringFormat=C2, ConverterCulture='de-DE', Converter={StaticResource InputValue}}" Header="Payment">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Payment, Converter={StaticResource InputValue}}" Value="False">
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Payment, Converter={StaticResource InputValue}}" Value="True">
+                                    <Setter Property="FontWeight" Value="Heavy"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=Interest, StringFormat=C2, ConverterCulture='de-DE'}" Header="Interest" IsReadOnly="True" />
                 <DataGridTextColumn Binding="{Binding Path=Repayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Repayment" IsReadOnly="True" />
             </DataGrid.Columns>
@@ -122,7 +133,7 @@
         </WrapPanel>
         
         <WrapPanel Grid.Row="3" HorizontalAlignment="Center">
-            <Button Padding="5 0 5 0" Margin="10 10 10 10" Content="Calculate" Command="{Binding CalculateCommand}"/>
+            <Button Padding="5 0 5 0" Margin="10 10 10 10" Content="Reset" Command="{Binding ResetCommand}"/>
         </WrapPanel>
     </Grid>
 </UserControl>

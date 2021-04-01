@@ -12,16 +12,16 @@ namespace Interest.Tests
         [InlineData(1000.0, 10000.0, 0.01, 0.0)]
         [InlineData(10000.0, 10000.0, 0.05, 0)]
         [InlineData(10000.0, 10000.0, 0.001, 0)]
-        public void GetProperties(double monthlyPayment, double initialDebt, double BorrowingPercentagePerYear, double unscheduledRepaymentValue)
+        public void GetProperties(double monthlyPayment, double initialDebt, double borrowingPercentagePerYear, double unscheduledRepaymentValue)
         {
             var date = new DateTime(2020, 04, 01);
-            var unscheduledRepayment = new UnscheduledRepayment(unscheduledRepaymentValue, false);
+            var unscheduledRepayment = new InputValue<double>(unscheduledRepaymentValue, InputType.Auto);
             var reducedDebt = Calculator.GetReducedDebt(initialDebt, unscheduledRepayment);
-            var interest = Calculator.GetInterest(reducedDebt, BorrowingPercentagePerYear);
+            var interest = Calculator.GetInterest(reducedDebt, borrowingPercentagePerYear);
 
-            var p = new Payment(date, monthlyPayment, initialDebt, BorrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
+            var p = new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), initialDebt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
             Assert.Equal(date, p.Month);
-            Assert.Equal(monthlyPayment, p.MonthlyPayment);
+            Assert.Equal(monthlyPayment, p.Payment.Value);
             Assert.Equal(initialDebt, p.Debt);
         }
 
@@ -30,8 +30,8 @@ namespace Interest.Tests
         {
             var date = new DateTime(2020, 04, 01);
             var monthlyPayment = -1.1;
-            var unscheduledRepayment = new UnscheduledRepayment(0, false);
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Payment(date, monthlyPayment, 100, .001, unscheduledRepayment, 5000, 1));
+            var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
+            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), 100, .001, unscheduledRepayment, 5000, 1));
         }
 
         [Fact]
@@ -40,9 +40,9 @@ namespace Interest.Tests
             var date = new DateTime(2020, 04, 01);
             var monthlyPayment = 1.1;
             var debt = -1.1;
-            var unscheduledRepayment = new UnscheduledRepayment(0, false);
+            var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Payment(date, monthlyPayment, debt, .001, unscheduledRepayment, 5000, 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), debt, .001, unscheduledRepayment, 5000, 1));
         }
 
         [Fact]
@@ -52,9 +52,9 @@ namespace Interest.Tests
             var monthlyPayment = 1.1;
             var debt = 1.1;
             var borrowingPercentagePerYear = -.0011;
-            var unscheduledRepayment = new UnscheduledRepayment(0, false);
+            var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Payment(date, monthlyPayment, debt, borrowingPercentagePerYear, unscheduledRepayment, 5000, 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), debt, borrowingPercentagePerYear, unscheduledRepayment, 5000, 1));
         }
 
         [Fact]
@@ -64,9 +64,9 @@ namespace Interest.Tests
             var monthlyPayment = 1.1;
             var debt = 1.1;
             var borrowingPercentagePerYear = 1.1;
-            var unscheduledRepayment = new UnscheduledRepayment(-0.0011, false);
+            var unscheduledRepayment = new InputValue<double>(-0.0011, InputType.Auto);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Payment(date, monthlyPayment, debt, borrowingPercentagePerYear, unscheduledRepayment, 5000, 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), debt, borrowingPercentagePerYear, unscheduledRepayment, 5000, 1));
         }
 
     }

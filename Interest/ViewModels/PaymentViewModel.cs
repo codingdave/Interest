@@ -4,60 +4,87 @@ using System;
 
 namespace Interest.ViewModels
 {
-
     public class PaymentViewModel : BindableBase
     {
-        public PaymentViewModel(DateTime month, double monthlyPayment, double debt, double borrowingPercentagePerYear, UnscheduledRepayment unscheduledRepayment)
+        public PaymentViewModel(DateTime month, InputValue<double> payment, double debt, double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment, Action calculateCommandExecute)
         {
+            _calculateCommandExecute = calculateCommandExecute;
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
             var interest = Calculator.GetInterest(reducedDebt, borrowingPercentagePerYear);
-            _payment = new Payment(month, monthlyPayment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
+            _paymentModel = new PaymentModel(month, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
         }
 
-        public PaymentViewModel(DateTime month, double debt, double BorrowingPercentagePerYear) // no repayment, interest cost only
+        public PaymentViewModel(DateTime month, double debt, double borrowingPercentagePerYear, Action calculateCommandExecute) // no repayment, interest cost only
         {
-            var unscheduledRepayment = new UnscheduledRepayment(0, InputType.Auto);
+            _calculateCommandExecute = calculateCommandExecute;
+
+            var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
-            var interest = Calculator.GetInterest(reducedDebt, BorrowingPercentagePerYear);
-            _payment = new Payment(month, interest, debt, BorrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
+            var interest = Calculator.GetInterest(reducedDebt, borrowingPercentagePerYear);
+            _paymentModel = new PaymentModel(month, new InputValue<double>(interest, InputType.Auto), debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
         }
 
-        Payment _payment;
+        PaymentModel _paymentModel;
+        private Action _calculateCommandExecute;
 
         public DateTime Month
         {
-            get => _payment.Month;
-            set => _ = SetProperty(ref _payment.Month, value);
+            get => _paymentModel.Month;
+            set => _ = SetProperty(ref _paymentModel.Month, value);
         }
 
-        public double MonthlyPayment
+        public InputValue<double> Payment
         {
-            get => _payment.MonthlyPayment;
-            set => _ = SetProperty(ref _payment.MonthlyPayment, value);
+            get => _paymentModel.Payment;
+            set
+            {
+                if (SetProperty(ref _paymentModel.Payment, value))
+                {
+                    _calculateCommandExecute?.Invoke();
+                }
+            }
         }
 
         public double Debt
         {
-            get => _payment.Debt;
-            set => _ = SetProperty(ref _payment.Debt, value);
+            get => _paymentModel.Debt;
+            set
+            {
+                if (SetProperty(ref _paymentModel.Debt, value))
+                {
+                    _calculateCommandExecute?.Invoke();
+                }
+            }
         }
 
         public double BorrowingPercentagePerYear
         {
-            get => _payment.BorrowingPercentagePerYear;
-            set => _ = SetProperty(ref _payment.BorrowingPercentagePerYear, value);
+            get => _paymentModel.BorrowingPercentagePerYear;
+            set
+            {
+                if (SetProperty(ref _paymentModel.BorrowingPercentagePerYear, value))
+                {
+                    _calculateCommandExecute?.Invoke();
+                }
+            }
         }
 
-        public UnscheduledRepayment UnscheduledRepayment
+        public InputValue<double> UnscheduledRepayment
         {
-            get => _payment.UnscheduledRepayment;
-            set => _ = SetProperty(ref _payment.UnscheduledRepayment, value);
+            get => _paymentModel.UnscheduledRepayment;
+            set
+            {
+                if (SetProperty(ref _paymentModel.UnscheduledRepayment, value))
+                {
+                    _calculateCommandExecute?.Invoke();
+                }
+            }
         }
 
-        public double Interest => _payment.Interest;
-        public double BorrowingPercentage => _payment.BorrowingPercentage;
-        public double Repayment => _payment.Repayment;
-        public double ResidualDebt => _payment.ResidualDebt;
-        public double ReducedDebt => _payment.ReducedDebt;
+        public double Interest => _paymentModel.Interest;
+        public double BorrowingPercentage => _paymentModel.BorrowingPercentage;
+        public double Repayment => _paymentModel.Repayment;
+        public double ResidualDebt => _paymentModel.ResidualDebt;
+        public double ReducedDebt => _paymentModel.ReducedDebt;
     }
 }

@@ -1,21 +1,14 @@
 ﻿namespace Interest
 {
-
-    public enum InputType
+    public struct InputValue<T>
     {
-        Auto,
-        Manual
-    }
-
-    public struct UnscheduledRepayment
-    {
-        public UnscheduledRepayment(double value, InputType valueType)
+        public InputValue(T value, InputType valueType)
         {
             Value = value;
             InputType = valueType;
         }
 
-        public double Value;
+        public T Value;
         public InputType InputType;
 
         public override string ToString()

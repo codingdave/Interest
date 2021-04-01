@@ -31,9 +31,9 @@ namespace Interest.Views
             set { SetValue(UnscheduledRepaymentProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for UnscheduledRepayment.  This enables animation, styling, binding, etc...
+        // Using a DependencyProperty as the backing store for InputValue.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty UnscheduledRepaymentProperty =
-            DependencyProperty.Register("UnscheduledRepayment", typeof(bool), typeof(InterestPlan), new PropertyMetadata(UnscheduledRepaymentChanged));
+            DependencyProperty.Register("InputValue", typeof(bool), typeof(InterestPlan), new PropertyMetadata(UnscheduledRepaymentChanged));
 
         private static void UnscheduledRepaymentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
