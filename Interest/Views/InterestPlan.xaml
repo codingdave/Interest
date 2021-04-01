@@ -47,6 +47,8 @@
         </Grid.RowDefinitions>
 
         <WrapPanel Grid.Row="0">
+            <Label Content="Lender:" />
+            <TextBox Text="{Binding Title}"/>
             <Label Content="Loan (€):" />
             <TextBox Text="{Binding LoanAmount, StringFormat=C2, ConverterCulture='de-DE'}"/>
             <Label Content="Borrowing (%):" />
