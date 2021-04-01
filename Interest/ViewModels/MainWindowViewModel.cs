@@ -82,9 +82,7 @@ namespace Interest.ViewModels
         public CultureInfo[] Cultures { get; protected set; }
         public ICommand CreateWindowCommand { get; private set; }
         public Action CreateWindow { get; set; }
-
         public ObservableCollection<InterestPlanViewModel> InterestPlanViewModels { get; }
-
         public ICommand AddInterestPlanCommand { get; set; }
         public DelegateCommand DeleteInterestPlanCommand { get; }
         public DelegateCommand ResetAllCommand { get; }
