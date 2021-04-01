@@ -39,7 +39,7 @@
         <local:InputValueConverter x:Key="InputValue"/>
     </UserControl.Resources>
 
-    <Grid Margin="10">
+    <Grid Margin="10" HorizontalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>

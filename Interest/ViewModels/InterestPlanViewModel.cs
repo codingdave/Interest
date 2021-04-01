@@ -13,9 +13,9 @@ namespace Interest.ViewModels
 
         private IEnumerable<PaymentViewModel> _payments;
 
-        public InterestPlanViewModel(string title = null)
+        public InterestPlanViewModel(ConfigurationManagerReaderWriter configurationManagerReaderWriter, string title = null)
         {
-            _conf = new ConfigurationManagerReaderWriter();
+            _conf = configurationManagerReaderWriter;
 
             Title = title;
 

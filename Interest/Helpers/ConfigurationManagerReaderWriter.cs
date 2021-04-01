@@ -9,19 +9,18 @@ using System.Threading.Tasks;
 
 namespace Interest
 {
-    internal class ConfigurationManagerReaderWriter
+    public class ConfigurationManagerReaderWriter
     {
         private Configuration _config;
 
-        public ConfigurationManagerReaderWriter()
+        public ConfigurationManagerReaderWriter(Configuration configuration)
         {
-            var configurationUserLevel = ConfigurationUserLevel.None;
-            _config = ConfigurationManager.OpenExeConfiguration(configurationUserLevel);
+            _config = configuration;
 
             var now = DateTime.Now;
             var startMonth = new DateTime(now.Year, now.Month, 1);
             GenerateDefaultValues("StartMonth", startMonth.ToString(CultureInfo.InvariantCulture));
-            ReadAllSettings();
+            //ReadAllSettings();
         }
 
         internal void GenerateDefaultValues(string key, string value)

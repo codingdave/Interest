@@ -1,4 +1,5 @@
-﻿using Interest.Views;
+﻿using Interest.ViewModels;
+using Interest.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,8 +22,6 @@ namespace Interest
     {
         public App()
         {
-            var m = new MainWindow();
-            m.ShowDialog();
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -46,7 +45,7 @@ namespace Interest
                         .AddIniFile($"appsettings.{env.EnvironmentName}.ini", optional: true, reloadOnChange: true)
                         .AddXmlFile($"appsettings.xml", optional: true, reloadOnChange: true)
                         .AddXmlFile($"repeating-example.xml", optional: true, reloadOnChange: true)
-                        .AddEnvironmentVariables(prefix: "CustomPrefix_") 
+                        .AddEnvironmentVariables(prefix: "CustomPrefix_")
                     ;
 
                     IConfigurationRoot configurationRoot = configurationBuilder.Build();
@@ -65,7 +64,6 @@ namespace Interest
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            //throw new NotImplementedException();
             //containerRegistry.RegisterSingleton<ApplicationService>();
             //containerRegistry.RegisterSingleton<CoreRoutines>();
             //containerRegistry.RegisterSingleton<DialogService>();
@@ -78,12 +76,24 @@ namespace Interest
             //    .CreateLogger();
             // Register Serilog with Prism
             //containerRegistry.RegisterSerilog(logger);
+
+            containerRegistry
+                .RegisterSingleton<Configuration>(() =>
+                {
+                    return ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                })
+                .RegisterSingleton<ConfigurationManagerReaderWriter>();
         }
 
         protected override Window CreateShell()
         {
-            //return Container.Resolve<MainWindow>();
-            return null;
+            var vm = Container.Resolve<MainWindowViewModel>();
+            var w = Container.Resolve<MainWindow>();
+            w.DataContext = vm;
+            w.WindowState = WindowState.Maximized;
+            w.WindowStyle = WindowStyle.SingleBorderWindow;
+            w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            return w;
         }
     }
 

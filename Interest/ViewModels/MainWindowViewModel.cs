@@ -9,12 +9,12 @@ namespace Interest.ViewModels
 {
     public class MainWindowViewModel : BindableBase, ICreateWindow
     {
-        public MainWindowViewModel()
+        public MainWindowViewModel(ConfigurationManagerReaderWriter reader)
         {
-            InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>() { new InterestPlanViewModel("first"), };
+            InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>() { new InterestPlanViewModel(reader, "first"), };
 
             CreateWindowCommand = new DelegateCommand(() => CreateWindow?.Invoke());
-            AddInterestPlanCommand = new DelegateCommand(() => InterestPlanViewModels.Add(new InterestPlanViewModel("...")));
+            AddInterestPlanCommand = new DelegateCommand(() => InterestPlanViewModels.Add(new InterestPlanViewModel(reader, "...")));
 
             ResetAllCommand = new DelegateCommand(() => InterestPlanViewModels.ToList().ForEach(ip => ip.ResetCommand.Execute()));
 

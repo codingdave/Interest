@@ -7,7 +7,7 @@
         xmlns:view="clr-namespace:Interest.Views"
         xmlns:local="clr-namespace:Interest"
         xmlns:prism="http://prismlibrary.com/"
-        prism:ViewModelLocator.AutoWireViewModel="True"
+        prism:ViewModelLocator.AutoWireViewModel="False"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -22,7 +22,7 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Grid>
+    <Grid HorizontalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
