@@ -11,7 +11,7 @@ namespace Interest.ViewModels
         internal InterestPlanViewModelOptions Values { get; }
         private IEnumerable<PaymentViewModel> _payments;
 
-        public InterestPlanViewModel() : this(new InterestPlanViewModelOptions())
+        public InterestPlanViewModel() : this(InterestPlanViewModelOptions.GetDefault())
         {
             if (!System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
@@ -23,7 +23,16 @@ namespace Interest.ViewModels
         {
             Values = values;
 
-            CalculateCommand = new DelegateCommand(() => Payments = Calculate());
+            CalculateCommand = new DelegateCommand(() =>
+            {
+                if (!_calculating)
+                {
+                    _calculating = true;
+                    Payments = Calculate();
+                }
+                _calculating = false;
+            }
+            );
             ResetCommand = new DelegateCommand(() => ResetAllInputValues());
 
             CalculateCommand.Execute();
@@ -101,50 +110,79 @@ namespace Interest.ViewModels
         public IEnumerable<PaymentViewModel> Calculate()
         {
             var ret = new List<PaymentViewModel>();
-
             var date = StartMonth;
             var endMonth = StartMonth.AddYears(Years);
-            InputValue<double> unscheduledRepayment = default;
-            InputValue<double> payment = default;
             var residualDebt = LoanAmount;
-            var redemptionFreeMonths = RedemptionFreeMonths;
-            while (date < endMonth && residualDebt > 0)
+
+            if (IsFullRepayment)
             {
-                date = date.AddMonths(1);
+                // full repayment
+                //public PaymentViewModel(DateTime date, int duration_years, double debt, double borrowingPercentagePerYear, Action<object> calculateCommandExecute)
+                var borrowingValue = BorrowingPercentagePerYear / 100.0;
+                var pow = Math.Pow(1.0 + borrowingValue, Years);
+                var annuityFactorPerYear = borrowingValue * pow / (pow - 1);
+                var annuityPercentagePerYear = annuityFactorPerYear * 100;
 
-                PaymentViewModel p;
-                if (ret.Count < redemptionFreeMonths)
+                var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
+                var payment = new InputValue<double>(
+                    Calculator.GetInterestCostPerMonth(
+                        Calculator.GetReducedDebt(residualDebt, unscheduledRepayment), annuityPercentagePerYear), InputType.Auto);
+                while (date < endMonth)
                 {
-                    // we only pay interest, no redemption
-                    p = new PaymentViewModel(date, residualDebt, BorrowingPercentagePerYear, CalculateCommand.Execute);
+                    date = date.AddMonths(1);
+                    var reducedDebt = Calculator.GetReducedDebt(residualDebt, unscheduledRepayment);
+                    var p = new PaymentViewModel(date, payment, reducedDebt, BorrowingPercentagePerYear, unscheduledRepayment, CalculateCommand.Execute);
+                    ret.Add(p);
+                    residualDebt = p.ResidualDebt;
                 }
-                else
+             
+                BorrowingPercentagePerYear = annuityPercentagePerYear;
+            }
+            else
+            {
+                InputValue<double> unscheduledRepayment = default;
+                InputValue<double> payment = default;
+                var redemptionFreeMonths = RedemptionFreeMonths;
+                while (date < endMonth && residualDebt > 0)
                 {
-                    if (Payments?.Count() > ret.Count)
+                    date = date.AddMonths(1);
+
+                    PaymentViewModel p;
+
+                    if (ret.Count < redemptionFreeMonths)
                     {
-                        // we keep manual modifications
-                        var oldPayment = Payments.ElementAt(ret.Count);
-                        unscheduledRepayment = oldPayment.UnscheduledRepayment.InputType == InputType.Manual ? oldPayment.UnscheduledRepayment : default;
-                        payment = oldPayment.Payment.InputType == InputType.Manual ? oldPayment.Payment : new InputValue<double>(RedemptionAmount, InputType.Auto);
+                        // we only pay interest, no redemption
+                        p = new PaymentViewModel(date, residualDebt, BorrowingPercentagePerYear, CalculateCommand.Execute);
+                    }
+                    else
+                    {
+                        if (Payments?.Count() > ret.Count)
+                        {
+                            // we keep manual modifications
+                            var oldPayment = Payments.ElementAt(ret.Count);
+                            unscheduledRepayment = oldPayment.UnscheduledRepayment.InputType == InputType.Manual ? oldPayment.UnscheduledRepayment : default;
+                            payment = oldPayment.Payment.InputType == InputType.Manual ? oldPayment.Payment : new InputValue<double>(RedemptionAmount, InputType.Auto);
+                        }
+
+                        if (unscheduledRepayment.InputType == InputType.Auto && IsApplyAllUnscheduledRepayments && date.Month == StartMonth.AddMonths(1).Month)
+                        {
+                            // on optimize we override everythings
+                            unscheduledRepayment = new InputValue<double>(LoanAmount * UnscheduledRepaymentPercentage / 100.0, InputType.Auto);
+                        }
+                        unscheduledRepayment = new InputValue<double>(Math.Min(unscheduledRepayment.Value, residualDebt), unscheduledRepayment.InputType);
+
+                        p = new PaymentViewModel(date, payment, residualDebt, BorrowingPercentagePerYear, unscheduledRepayment, CalculateCommand.Execute);
                     }
 
-                    if (unscheduledRepayment.InputType == InputType.Auto && IsApplyAllUnscheduledRepayments && date.Month == StartMonth.AddMonths(1).Month)
-                    {
-                        // on optimize we override everythings
-                        unscheduledRepayment = new InputValue<double>(LoanAmount * UnscheduledRepaymentPercentage / 100.0, InputType.Auto);
-                    }
-                    unscheduledRepayment = new InputValue<double>(Math.Min(unscheduledRepayment.Value, residualDebt), unscheduledRepayment.InputType);
-
-                    p = new PaymentViewModel(date, payment, residualDebt, BorrowingPercentagePerYear, unscheduledRepayment, CalculateCommand.Execute);
+                    ret.Add(p);
+                    residualDebt = p.ResidualDebt;
                 }
-
-                ret.Add(p);
-                residualDebt = p.ResidualDebt;
             }
             return ret;
         }
 
         #region RedemptionPercentage
+
         public double RedemptionPercentage
         {
             get { return Values._redemptionPercentage; }
@@ -158,9 +196,11 @@ namespace Interest.ViewModels
                 }
             }
         }
-        #endregion
+
+        #endregion RedemptionPercentage
 
         #region StartMonth
+
         public DateTime StartMonth
         {
             get { return Values.StartMonth; }
@@ -172,9 +212,11 @@ namespace Interest.ViewModels
                 }
             }
         }
-        #endregion
+
+        #endregion StartMonth
 
         #region RedemptionFreeMonths
+
         public int RedemptionFreeMonths
         {
             get { return Values.RedemptionFreeMonths; }
@@ -186,9 +228,11 @@ namespace Interest.ViewModels
                 }
             }
         }
-        #endregion
+
+        #endregion RedemptionFreeMonths
 
         #region UnscheduledRepaymentPercentage
+
         public double UnscheduledRepaymentPercentage
         {
             get { return Values.UnscheduledRepaymentPercentage; }
@@ -200,10 +244,13 @@ namespace Interest.ViewModels
                 }
             }
         }
-        #endregion
+
+        #endregion UnscheduledRepaymentPercentage
 
         #region IsApplyAllÚnscheduledRepayments
+
         private bool _isApplyAllUnscheduledRepayments;
+
         public bool IsApplyAllUnscheduledRepayments
         {
             get { return _isApplyAllUnscheduledRepayments; }
@@ -215,9 +262,11 @@ namespace Interest.ViewModels
                 }
             }
         }
-        #endregion
+
+        #endregion IsApplyAllÚnscheduledRepayments
 
         #region Years
+
         public int Years
         {
             get { return Values.Years; }
@@ -229,9 +278,11 @@ namespace Interest.ViewModels
                 }
             }
         }
-        #endregion
+
+        #endregion Years
 
         #region BorrowingPercentagePerYear
+
         public double BorrowingPercentagePerYear
         {
             get { return Values.BorrowingPercentagePerYear; }
@@ -243,9 +294,11 @@ namespace Interest.ViewModels
                 }
             }
         }
-        #endregion
+
+        #endregion BorrowingPercentagePerYear
 
         #region LoanAmount
+
         public double LoanAmount
         {
             get { return Values.LoanAmount; }
@@ -257,19 +310,42 @@ namespace Interest.ViewModels
                 }
             }
         }
-        #endregion
+
+        #endregion LoanAmount
 
         #region Lender
+
         public string Lender
         {
             get => Values.Lender;
             set => _ = SetProperty(ref Values._lender, value);
         }
-        #endregion
+
+        #endregion Lender
 
         public override string ToString()
         {
             return Values.ToString();
         }
+
+        private bool _calculating;
+
+        #region IsFullRepayment
+
+        private bool _isFullRepayment;
+
+        public bool IsFullRepayment
+        {
+            get => _isFullRepayment;
+            set
+            {
+                if (SetProperty(ref _isFullRepayment, value))
+                {
+                    CalculateCommand.Execute();
+                }
+            }
+        }
+
+        #endregion IsFullRepayment
     }
 }

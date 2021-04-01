@@ -13,14 +13,14 @@ namespace Interest
             return monthlyPayment - interest;
         }
 
-        public static double GetInterest(double reducedDebt, double borrowingPercentagePerYear)
+        public static double GetInterestCostPerMonth(double reducedDebt, double interestPercentagePerYear)
         {
-            return reducedDebt * GetBorrowingPercentage(borrowingPercentagePerYear);
+            return reducedDebt * GetPercentagePerMonth(interestPercentagePerYear);
         }
 
-        public static double GetBorrowingPercentage(double borrowingPercentagePerYear)
+        public static double GetPercentagePerMonth(double interestPercentagePerYear)
         {
-            return borrowingPercentagePerYear / 12 / 100;
+            return interestPercentagePerYear / 12 / 100;
         }
 
         public static double GetResidualDebt(double reducedDebt, double repayment)

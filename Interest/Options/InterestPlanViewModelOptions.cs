@@ -28,7 +28,7 @@ namespace Interest.Options
             var i = new InterestPlanViewModelOptions();
             i.BorrowingPercentagePerYear = .99;
             i.LoanAmount = 250000;
-            i.RedemptionFreeMonths = 12;
+            i.RedemptionFreeMonths = 0;
             i.RedemptionPercentage = 2.5;
             i.StartMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             i.Lender = "Unknown Lender";

@@ -1,5 +1,16 @@
+using System.Windows;
 using System.Reflection;
 using System.Runtime.InteropServices;
+
+[assembly: ThemeInfo(
+    ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
+                                     //(used if a resource is not found in the page,
+                                     // or application resource dictionaries)
+    ResourceDictionaryLocation.SourceAssembly //where the generic resource dictionary is located
+                                              //(used if a resource is not found in the page,
+                                              // app, or any theme specific resource dictionaries)
+)]
+
 
 // In SDK-style projects such as this one, several assembly attributes that were historically
 // defined in this file are now automatically added during build and populated with
@@ -17,7 +28,9 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("8198894b-609a-4f51-ad21-4fabe90234b9")]
 
+#if RELEASE
 [assembly: AssemblyVersion(ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch)]
+#endif
 [assembly: AssemblyInformationalVersion(
   ThisAssembly.Git.SemVer.Major + "." +
   ThisAssembly.Git.SemVer.Minor + "." +

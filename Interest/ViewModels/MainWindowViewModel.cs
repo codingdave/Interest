@@ -21,8 +21,8 @@ namespace Interest.ViewModels
             }
 
             var options = new List<InterestPlanViewModelOptions>();
-            options.Add(new InterestPlanViewModelOptions() { Lender = "Consors Finanz" });
-            options.Add(new InterestPlanViewModelOptions() { Lender = "Deutsche Bank" });
+            options.Add(InterestPlanViewModelOptions.GetDefault());
+            options.Add(InterestPlanViewModelOptions.GetDefault());
             InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>(options.Select(ip => new InterestPlanViewModel(ip)));
         }
 

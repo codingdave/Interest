@@ -9,18 +9,26 @@ namespace Interest.ViewModels
         {
             _calculateCommandExecute = calculateCommandExecute;
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
-            var interest = Calculator.GetInterest(reducedDebt, borrowingPercentagePerYear);
+            var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowingPercentagePerYear);
             _paymentModel = new PaymentModel(date, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
         }
 
-        public PaymentViewModel(DateTime date, double debt, double borrowingPercentagePerYear, Action<object> calculateCommandExecute) // no repayment, interest cost only
+        public PaymentViewModel(DateTime date, double debt, double borrowingPercentagePerYear, Action<object> calculateCommandExecute)
+        // no repayment, interest cost only
         {
             _calculateCommandExecute = calculateCommandExecute;
 
             var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
-            var interest = Calculator.GetInterest(reducedDebt, borrowingPercentagePerYear);
+            var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowingPercentagePerYear);
             _paymentModel = new PaymentModel(date, new InputValue<double>(interest, InputType.Auto), debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
+        }
+
+        public PaymentViewModel(DateTime date, InputValue<double> payment, double debt, double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment, double reducedDebt, double interestPerYear, Action<object> calculateCommandExecute)
+        // full repayment
+        {
+            _calculateCommandExecute = calculateCommandExecute;
+            _paymentModel = new PaymentModel(date, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interestPerYear);
         }
 
         PaymentModel _paymentModel;

@@ -8,6 +8,7 @@
       xmlns:model="clr-namespace:Interest.Models"
       xmlns:view="clr-namespace:Interest.Views"
       xmlns:local="clr-namespace:Interest"
+      xmlns:converters="clr-namespace:Interest.Converters"
       d:DataContext="{d:DesignInstance Type=vm:InterestPlanViewModel, IsDesignTimeCreatable=True}"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -34,8 +35,10 @@
         <Style TargetType="DataGridCell">
             <Setter Property="HorizontalAlignment" Value="Right" />
         </Style>
-        <local:PercentageConverter x:Key="percentageConverter" />
-        <local:InputValueConverter x:Key="InputValue"/>
+        <converters:PercentageConverter x:Key="percentageConverter" />
+        <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter" />
+        <converters:BooleanInversionConverter x:Key="booleanInversionConverter" />
+        <converters:InputValueConverter x:Key="InputValue"/>
     </UserControl.Resources>
 
     <Grid Margin="10" HorizontalAlignment="Center">
@@ -49,23 +52,31 @@
         <WrapPanel Grid.Row="0">
             <Label Content="Lender:" />
             <TextBox Text="{Binding Lender, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Content="Starting from:" />
+            <TextBox Text="{Binding StartMonth, StringFormat=d, ConverterCulture='de-DE'}" />
             <Label Content="Loan (€):" />
             <TextBox Text="{Binding LoanAmount, StringFormat=C2, ConverterCulture='de-DE'}"/>
             <Label Content="Borrowing (%):" />
             <TextBox Text="{Binding BorrowingPercentagePerYear, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}"/>
-            <Label Content="Monthly Payment/Redemption (€):" />
-            <TextBox Text="{Binding RedemptionAmount, StringFormat=C2, ConverterCulture='de-DE'}"/>
-            <Label Content="Redemption (%):" />
-            <TextBox Text="{Binding RedemptionPercentage, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" />
             <Label Content="Years:" />
             <TextBox Text="{Binding Years}" />
+            <CheckBox Content="Full repayment" IsChecked="{Binding IsFullRepayment}" />
             <Label Content="Redemption free months:" />
             <TextBox Text="{Binding RedemptionFreeMonths}" />
-            <Label Content="Starting from:" />
-            <TextBox Text="{Binding StartMonth, StringFormat=d, ConverterCulture='de-DE'}" />
-            <Label Content="Unscheduled Repayment (%):" />
-            <TextBox Text="{Binding UnscheduledRepaymentPercentage, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" />
-            <CheckBox Content="optimize extra repayments:" IsChecked="{Binding IsApplyAllUnscheduledRepayments}" ToolTip="Will add the maximum unschedluded repayment every 12 months"/>
+            <Label Content="Monthly Payment/Redemption (€):" />
+            <TextBox Text="{Binding RedemptionAmount, StringFormat=C2, ConverterCulture='de-DE'}"
+                     IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
+            <Label Content="Redemption (%):"
+                     IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
+            <TextBox Text="{Binding RedemptionPercentage, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}"
+                     IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
+            <Label Content="Unscheduled Repayment (%):" 
+                     IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
+            <TextBox Text="{Binding UnscheduledRepaymentPercentage, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}"
+                     IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
+            <CheckBox Content="optimize extra repayments:" IsChecked="{Binding IsApplyAllUnscheduledRepayments}"
+                    ToolTip="Will add the maximum unschedluded repayment every 12 months"
+                    IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
         </WrapPanel>
         
         <DataGrid Grid.Row="1"
@@ -125,10 +136,10 @@
         </DataGrid>
 
         <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="TotalInterest: "/>
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding TotalInterest}" />
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Remaining Debt: " />
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding ResidualDebt}" />
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Total Interest: "/>
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding TotalInterest, StringFormat=C2, ConverterCulture='de-DE'}" />
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Residual Debt: " />
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" />
         </WrapPanel>
         
         <WrapPanel Grid.Row="3" HorizontalAlignment="Center">

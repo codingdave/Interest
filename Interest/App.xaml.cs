@@ -16,12 +16,13 @@ namespace Interest
     {
         public App()
         {
+            // index
             // Image size on startup
             // unit tests
             // volltilger
             // Jahre in Main 
             // StartMonth in Main
-            // version in about, assemblyinfo.cs
+            // obfuscation
         }
 
         protected override void OnStartup(StartupEventArgs e)
