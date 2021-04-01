@@ -6,6 +6,8 @@
         xmlns:vm="clr-namespace:Interest.ViewModels"
         xmlns:view="clr-namespace:Interest.Views"
         xmlns:local="clr-namespace:Interest"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
@@ -37,8 +39,8 @@
             </StackPanel>
         </Button>-->
 
-        <view:About DockPanel.Dock="Right"/>
-        <!--<view:InterestPlan Grid.Row="0" DockPanel.Dock="Bottom"/>-->
+        <!--<view:About DockPanel.Dock="Right"/>-->
+        <view:InterestPlan Grid.Row="0" DockPanel.Dock="Bottom"/>
     </DockPanel>
     <!--Height="500" Width="800"-->
     <!---->

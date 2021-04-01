@@ -56,11 +56,10 @@ namespace Interest
 
                     IConfigurationRoot configurationRoot = configuration.Build();
 
-                    TransientFaultHandlingOptions transientOptions = new();
-                    configurationRoot.GetSection(nameof(TransientFaultHandlingOptions)).Bind(transientOptions);
-
-                    System.Diagnostics.Debug.WriteLine($"TransientFaultHandlingOptions.Enabled={transientOptions.Enabled}");
-                    System.Diagnostics.Debug.WriteLine($"TransientFaultHandlingOptions.AutoRetryDelay={transientOptions.AutoRetryDelay}");
+                    //TransientFaultHandlingOptions transientOptions = new();
+                    //configurationRoot.GetSection(nameof(TransientFaultHandlingOptions)).Bind(transientOptions);
+                    //System.Diagnostics.Debug.WriteLine($"TransientFaultHandlingOptions.Enabled={transientOptions.Enabled}");
+                    //System.Diagnostics.Debug.WriteLine($"TransientFaultHandlingOptions.AutoRetryDelay={transientOptions.AutoRetryDelay}");
 
                     foreach ((string key, string value) in
                         configuration.Build().AsEnumerable().Where(t => t.Value is not null))

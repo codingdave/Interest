@@ -9,7 +9,6 @@ namespace Interest.ViewModels
 {
     public class AboutViewModel : BindableBase
     {
-
         public AboutViewModel()
         {
             _text = "About this application";
