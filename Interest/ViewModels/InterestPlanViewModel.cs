@@ -41,7 +41,6 @@ namespace Interest.ViewModels
             var endMonth = StartMonth.AddYears(Years);
             var monthlyPayment = RedemptionAmount;
 
-            double unscheduledRepayment = 0;
             while (month < endMonth)
             {
                 month = month.AddMonths(1);
@@ -50,13 +49,13 @@ namespace Interest.ViewModels
                 var remainingDebtPlusRate = residualDebt + residualDebt * BorrowingPercentage / 12.0;
                 if (remainingDebtPlusRate >= monthlyPayment)
                 {
-                    var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingPercentage, unscheduledRepayment);
+                    var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingPercentage, 0);
                     ret.Add(p);
                 }
                 else
                 {
                     monthlyPayment = remainingDebtPlusRate;
-                    var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingPercentage, unscheduledRepayment);
+                    var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingPercentage, 0);
                     ret.Add(p);
                     break;
                 }
@@ -76,7 +75,7 @@ namespace Interest.ViewModels
             {
                 month = month.AddMonths(1);
                 var unscheduledRepayment = IsApplyAllUnscheduledRepayments && month.Month == StartMonth.AddMonths(1).Month
-                    ? GetRequiredAmount(InitialPayments.First().InitialDebt * UnscheduledRepaymentPercentage / 100, currentDebt)
+                    ? GetRequiredAmount(InitialPayments.First().InitialDebt * UnscheduledRepaymentPercentage / 100.0, currentDebt)
                     : numPayments >= i
                         ? Payments.ElementAt(i).UnscheduledRepayment
                         : 0.0;
@@ -92,8 +91,7 @@ namespace Interest.ViewModels
         private static double GetRequiredAmount(double maximumAmount, double currentDebt)
         {
             var c = currentDebt;
-            var nextRate = maximumAmount/* + (maximumAmount * BorrowingPercentage / 12)*/;
-            double ret = c >= nextRate ? maximumAmount : c /*+ (c * BorrowingPercentage  / 12)*/;
+            double ret = c >= maximumAmount ? maximumAmount : c;
             return ret;
         }
 
@@ -162,11 +160,11 @@ namespace Interest.ViewModels
         {
             get
             {
-                return LoanAmount * (BorrowingPercentage + RedemptionPercentage) / 100 / 12;
+                return LoanAmount * (BorrowingPercentage + RedemptionPercentage) / 100.0 / 12.0;
             }
             set
             {
-                RedemptionPercentage = (value * 100 * 12 / LoanAmount) - BorrowingPercentage;
+                RedemptionPercentage = (value * 100.0 * 12.0 / LoanAmount) - BorrowingPercentage;
             }
         }
 
