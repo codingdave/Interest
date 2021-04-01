@@ -22,7 +22,6 @@ namespace Interest.Tests
             var p = new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), initialDebt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
             Assert.Equal(date, p.Date);
             Assert.Equal(monthlyPayment, p.Payment.Value);
-            Assert.Equal(initialDebt, p.Debt);
         }
 
         [Fact]

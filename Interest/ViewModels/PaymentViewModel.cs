@@ -64,18 +64,6 @@ namespace Interest.ViewModels
             }
         }
 
-        public double Debt
-        {
-            get => _paymentModel.Debt;
-            set
-            {
-                if (SetProperty(ref _paymentModel.Debt, value))
-                {
-                    _calculateCommandExecute?.Invoke(this);
-                }
-            }
-        }
-
         public double BorrowingPercentagePerYear
         {
             get => _paymentModel.BorrowingPercentagePerYear;

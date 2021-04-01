@@ -1,11 +1,6 @@
-﻿using Interest.Models;
-using Interest.Options;
+﻿using Interest.Options;
 using Interest.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Interest.Tests
@@ -23,18 +18,19 @@ namespace Interest.Tests
             var monthlyPayment = 50.0;
             var years = 15;
             var unscheduledRepaymentPercentage = .05;
+            var redemptionPercentage = Calculator.GetRedemptionPercentage(loanAmount, borrowingPercentagePerYear, monthlyPayment);
 
             plan.StartMonth = starMonth;
             plan.LoanAmount = loanAmount;
             plan.BorrowingPercentagePerYear = borrowingPercentagePerYear;
-            plan.RedemptionAmount = monthlyPayment;
+            plan.RedemptionPercentage = redemptionPercentage;
             plan.Years = years;
             plan.UnscheduledRepaymentPercentage = unscheduledRepaymentPercentage;
 
             Assert.Equal(years, plan.Years);
             Assert.Equal(starMonth, plan.StartMonth);
             Assert.Equal(borrowingPercentagePerYear, plan.BorrowingPercentagePerYear);
-            Assert.Equal(monthlyPayment, plan.RedemptionAmount);
+            Assert.Equal(monthlyPayment, Calculator.GetRedemptionAmount(loanAmount, borrowingPercentagePerYear, plan.RedemptionPercentage));
             Assert.Equal(loanAmount, plan.LoanAmount);
             Assert.Equal(unscheduledRepaymentPercentage, plan.UnscheduledRepaymentPercentage);
         }
@@ -49,12 +45,14 @@ namespace Interest.Tests
             var borrowingPercentagePerYear = 0.001;
             var monthlyPayment = 50.0;
             var years = 15;
-            var unscheduledRepaymentPercentage = .05;
+            var unscheduledRepaymentPercentage = .05; 
+            var redemptionPercentage = Calculator.GetRedemptionPercentage(loanAmount, borrowingPercentagePerYear, monthlyPayment);
+
 
             plan.StartMonth = starMonth;
             plan.LoanAmount = loanAmount;
             plan.BorrowingPercentagePerYear = borrowingPercentagePerYear;
-            plan.RedemptionAmount = monthlyPayment;
+            plan.RedemptionPercentage = redemptionPercentage;
             plan.Years = years;
             plan.UnscheduledRepaymentPercentage = unscheduledRepaymentPercentage;
 
@@ -63,7 +61,7 @@ namespace Interest.Tests
             Assert.Equal(years, plan.Years);
             Assert.Equal(starMonth, plan.StartMonth);
             Assert.Equal(borrowingPercentagePerYear, plan.BorrowingPercentagePerYear);
-            Assert.Equal(monthlyPayment, plan.RedemptionAmount);
+            Assert.Equal(monthlyPayment, Calculator.GetRedemptionAmount(loanAmount, borrowingPercentagePerYear, plan.RedemptionPercentage));
             Assert.Equal(loanAmount, plan.LoanAmount);
             Assert.Equal(unscheduledRepaymentPercentage, plan.UnscheduledRepaymentPercentage);
         }
@@ -80,11 +78,12 @@ namespace Interest.Tests
             var monthlyPayment = 50.0;
             var years = 15;
             var unscheduledRepaymentPercentage = .05;
+            var redemptionPercentage = Calculator.GetRedemptionPercentage(loanAmount, borrowingPercentagePerYear, monthlyPayment);
 
             plan.StartMonth = starMonth;
             plan.LoanAmount = loanAmount;
             plan.BorrowingPercentagePerYear = borrowingPercentagePerYear;
-            plan.RedemptionAmount = monthlyPayment;
+            plan.RedemptionPercentage = redemptionPercentage;
             plan.Years = years;
             plan.UnscheduledRepaymentPercentage = unscheduledRepaymentPercentage;
 
@@ -93,7 +92,7 @@ namespace Interest.Tests
             Assert.Equal(years, plan.Years);
             Assert.Equal(starMonth, plan.StartMonth);
             Assert.Equal(borrowingPercentagePerYear, plan.BorrowingPercentagePerYear);
-            Assert.Equal(monthlyPayment, plan.RedemptionAmount);
+            Assert.Equal(monthlyPayment, Calculator.GetRedemptionAmount(loanAmount, borrowingPercentagePerYear, plan.RedemptionPercentage));
             Assert.Equal(loanAmount, plan.LoanAmount);
             Assert.Equal(unscheduledRepaymentPercentage, plan.UnscheduledRepaymentPercentage);
         }

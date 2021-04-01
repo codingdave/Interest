@@ -19,22 +19,38 @@ namespace Interest.Options
     {
         public const string InterestPlan = "InterestPlan";
 
-        public InterestPlanViewModelOptions()
+        private InterestPlanViewModelOptions()
         {
         }
 
         public static InterestPlanViewModelOptions GetDefault()
         {
-            var i = new InterestPlanViewModelOptions();
-            i.BorrowingPercentagePerYear = .99;
-            i.LoanAmount = 250000;
-            i.RedemptionFreeMonths = 0;
-            i.RedemptionPercentage = 2.5;
-            i.StartMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            i.Lender = "Unknown Lender";
-            i.UnscheduledRepaymentPercentage = 5;
-            i.Years = 15;
-            return i;
+            return new InterestPlanViewModelOptions
+            {
+                BorrowingPercentagePerYear = .77,
+                LoanAmount = 100000,
+                RedemptionFreeMonths = 12,
+                RedemptionPercentage = 2.5,
+                StartMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1),
+                Lender = "Full Repayment with redemption free months",
+                UnscheduledRepaymentPercentage = 5,
+                Years = 20
+            };
+        }
+
+        public static InterestPlanViewModelOptions GetDefault2()
+        {
+            return new InterestPlanViewModelOptions
+            {
+                BorrowingPercentagePerYear = .99,
+                LoanAmount = 250000,
+                RedemptionFreeMonths = 0,
+                RedemptionPercentage = 2.5,
+                StartMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1),
+                Lender = "Unknown Lender",
+                UnscheduledRepaymentPercentage = 5,
+                Years = 15
+            };
         }
 
         public DateTime _startMonth;

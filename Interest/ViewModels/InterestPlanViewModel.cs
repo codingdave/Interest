@@ -65,19 +65,6 @@ namespace Interest.ViewModels
             }
         }
 
-        public double RedemptionAmount
-        {
-            get
-            {
-                return LoanAmount * (BorrowingPercentagePerYear + RedemptionPercentage) / 100.0 / 12.0;
-            }
-            set
-            {
-                RedemptionPercentage = (value * 100.0 * 12.0 / LoanAmount) - BorrowingPercentagePerYear;
-                CalculateCommand.Execute();
-            }
-        }
-
         public double ResidualDebt
         {
             get
@@ -109,14 +96,26 @@ namespace Interest.ViewModels
 
         public IEnumerable<PaymentViewModel> Calculate()
         {
-            return Calculator.GetPaymentPlan(Payments,
-                StartMonth, Years, LoanAmount, 
-                BorrowingPercentagePerYear, UnscheduledRepaymentPercentage, RedemptionAmount,   RedemptionFreeMonths,
-                IsApplyAllUnscheduledRepayments, IsFullRepayment, CalculateCommand.Execute);
+            return Calculator.GetPaymentPlan(previousPayments: Payments,
+                startMonth: StartMonth,
+                years: Years,
+                loan: LoanAmount,
+                percentagePerYear: BorrowingPercentagePerYear,
+                redemptionPercentage: RedemptionPercentage,
+                redemptionFreeMonths: RedemptionFreeMonths,
+                isApplyAllUnscheduledRepayments: IsApplyAllUnscheduledRepayments,
+                unscheduledRepaymentPercentage: UnscheduledRepaymentPercentage,
+                isFullRepayment: IsFullRepayment,
+                updateCalculation: CalculateCommand.Execute);
+        }
+
+        public double RedemptionAmount
+        {
+            get { return Calculator.GetRedemptionAmount(LoanAmount, BorrowingPercentagePerYear, RedemptionPercentage); }
+            set { RedemptionPercentage = Calculator.GetRedemptionPercentage(LoanAmount, BorrowingPercentagePerYear, value); }
         }
 
         #region RedemptionPercentage
-
         public double RedemptionPercentage
         {
             get { return Values._redemptionPercentage; }
@@ -124,14 +123,14 @@ namespace Interest.ViewModels
             {
                 if (SetProperty(ref Values._redemptionPercentage, value))
                 {
-                    RaisePropertyChanged(nameof(RedemptionAmount));
-
                     CalculateCommand.Execute();
+                    RaisePropertyChanged(nameof(RedemptionAmount));
                 }
             }
         }
-
         #endregion RedemptionPercentage
+
+        //public double RedemptionAmount { get => Calculator.GetRedemptionAmount(LoanAmount, BorrowingPercentagePerYear, RedemptionPercentage); }
 
         #region StartMonth
 
@@ -229,6 +228,7 @@ namespace Interest.ViewModels
                 if (SetProperty(ref Values._borrowingPercentagePerYear, value))
                 {
                     CalculateCommand.Execute();
+                    RaisePropertyChanged(nameof(RedemptionAmount));
                 }
             }
         }
@@ -243,6 +243,7 @@ namespace Interest.ViewModels
                 if (SetProperty(ref Values._loanAmount, value))
                 {
                     CalculateCommand.Execute();
+                    RaisePropertyChanged(nameof(RedemptionAmount));
                 }
             }
         }

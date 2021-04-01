@@ -9,19 +9,14 @@ namespace Interest
 {
     public static class Calculator
     {
-        public static double GetRepayment(double monthlyPayment, double interest)
+        public static double GetRepayment(double totalPayment, double interest)
         {
-            return monthlyPayment - interest;
+            return totalPayment - interest;
         }
 
         public static double GetInterestCostPerMonth(double reducedDebt, double interestPercentagePerYear)
         {
-            return reducedDebt * GetPercentagePerMonth(interestPercentagePerYear);
-        }
-
-        public static double GetPercentagePerMonth(double interestPercentagePerYear)
-        {
-            return interestPercentagePerYear / 12 / 100;
+            return reducedDebt * interestPercentagePerYear / 100 / 12;
         }
 
         public static double GetResidualDebt(double reducedDebt, double repayment)
@@ -34,27 +29,26 @@ namespace Interest
             return initialDebt - unscheduledRepayment.Value;
         }
 
-        internal static IEnumerable<PaymentViewModel> GetPaymentPlan(
+        public static IEnumerable<PaymentViewModel> GetPaymentPlan(
             IEnumerable<PaymentViewModel> previousPayments,
             DateTime startMonth, int years, double loan, double percentagePerYear,
-            double unscheduledRepaymentPercentage,
-            double redemptionAmount, int redemptionFreeMonths,
-            bool isApplyAllUnscheduledRepayments, bool isFullRepayment,
+            double redemptionPercentage, int redemptionFreeMonths,
+            bool isApplyAllUnscheduledRepayments, double unscheduledRepaymentPercentage,
+            bool isFullRepayment,
             Action<object> updateCalculation)
         {
             var ret = new List<PaymentViewModel>();
-            var date = startMonth;
+            var date = startMonth.AddMonths(1);
             var endMonth = startMonth.AddYears(years);
             var residualDebt = loan;
             var borrowingPercentagePerYear = percentagePerYear;
             PaymentViewModel p;
+            var redemptionAmount = GetRedemptionAmount(loan, borrowingPercentagePerYear, redemptionPercentage);
 
             InputValue<double> unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
             InputValue<double> payment = default;
             while (date < endMonth && residualDebt > 0)
             {
-                date = date.AddMonths(1);
-
                 if (ret.Count < redemptionFreeMonths)
                 {
                     // we only pay interest, no redemption
@@ -72,9 +66,7 @@ namespace Interest
                         var totalnterestPercentage = totalInterestFactor / (totalInterestFactor - 1);
                         var interestRatePerYear = borrowingRatePerYear * totalnterestPercentage;
                         var interestPercentagePerYear = interestRatePerYear * 100;
-                        payment = new InputValue<double>(
-                            GetInterestCostPerMonth(
-                                GetReducedDebt(residualDebt, unscheduledRepayment), interestPercentagePerYear), InputType.Auto);
+                        payment = new InputValue<double>(GetInterestCostPerMonth(GetReducedDebt(residualDebt, unscheduledRepayment), interestPercentagePerYear), InputType.Auto);
                         var debt = GetReducedDebt(residualDebt, unscheduledRepayment);
 
                         p = new PaymentViewModel(date, payment, debt, interestPercentagePerYear, unscheduledRepayment,
@@ -90,6 +82,10 @@ namespace Interest
                             unscheduledRepayment = oldPayment.UnscheduledRepayment.InputType == InputType.Manual ? oldPayment.UnscheduledRepayment : default;
                             payment = oldPayment.Payment.InputType == InputType.Manual ? oldPayment.Payment : new InputValue<double>(redemptionAmount, InputType.Auto);
                         }
+                        else
+                        {
+                            payment = new InputValue<double>(redemptionAmount, InputType.Auto);
+                        }
 
                         if (unscheduledRepayment.InputType == InputType.Auto && isApplyAllUnscheduledRepayments && date.Month == startMonth.AddMonths(1).Month)
                         {
@@ -104,8 +100,19 @@ namespace Interest
 
                 ret.Add(p);
                 residualDebt = p.ResidualDebt;
+                date = date.AddMonths(1);
             }
             return ret;
+        }
+
+        public static double GetRedemptionAmount(double loan, double percentagePerYear, double redemptionPercentagePerYear)
+        {
+            return loan * (percentagePerYear + redemptionPercentagePerYear) / 100.0 / 12.0;
+        }
+
+        public static double GetRedemptionPercentage(double loan, double percentagePerYear, double redemptionAmount)
+        {
+            return (redemptionAmount * 100.0 * 12.0 / loan) - percentagePerYear;
         }
     }
 }

@@ -13,7 +13,6 @@ namespace Interest.Models
             if (interestPerYear < 0) { throw new ArgumentOutOfRangeException("No interest given"); }
 
             Date = date;
-            Debt = debt;
             BorrowingPercentagePerYear = borrowingPercentagePerYear;
             BorrowingPercentage = BorrowingPercentagePerYear / 12.0;
             UnscheduledRepayment = unscheduledRepayment;
@@ -28,7 +27,6 @@ namespace Interest.Models
         public DateTime Date;
         public InputValue<double> Payment;
         public double BorrowingPercentagePerYear;
-        public double Debt;
         public InputValue<double> UnscheduledRepayment;
         public double Interest;
 

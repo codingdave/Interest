@@ -91,7 +91,7 @@
             >
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Date, StringFormat=d, ConverterCulture='de-DE'}" Header="Date" FontWeight="Light" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path=Debt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Remaining Debt" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Residual Debt" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Path=UnscheduledRepayment, StringFormat=C2, ConverterCulture='de-DE', Mode=TwoWay, Converter={StaticResource InputValue}}" Header="Unscheduled Repayment">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">

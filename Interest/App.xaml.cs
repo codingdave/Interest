@@ -16,13 +16,12 @@ namespace Interest
     {
         public App()
         {
-            // calsses for percentage, currency, fraction
-            // Payment: Fully repayment: do not override user-provided value
+            // calsses for percentage, currency, fraction?
             // MainWindow: Years, StartMonth
             // GridView: Show Index for month
             // Splash image, size, position
-            // obfuscation
             // Application Icon
+            // obfuscation?
             // Deployment: Zip? Single archive? Trimmed?
         }
 
