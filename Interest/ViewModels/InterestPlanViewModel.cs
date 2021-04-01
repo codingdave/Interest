@@ -14,12 +14,16 @@ namespace Interest.ViewModels
     {
         public InterestPlanViewModel()
         {
-
-            var now = DateTime.Now;
-            _startMonth = new DateTime(now.Year, now.Month, 1);
-
-            CreateCommand = new DelegateCommand(() =>
+            ResetCommand = new DelegateCommand(() =>
             {
+                var now = DateTime.Now;
+                StartMonth = new DateTime(now.Year, now.Month, 1);
+
+                UnscheduledRepaymentPercentage = 0.05;
+                BorrowingRate =  0.0084;
+                LoanAmount = 381000;
+                MonthlyPayment = 1139.83;
+
                 InitialPayments = Initialize();
                 Payments = Initialize();
             });
@@ -29,7 +33,7 @@ namespace Interest.ViewModels
                 Update();
             });
 
-            CreateCommand.Execute();
+            ResetCommand.Execute();
         }
 
         public IEnumerable<PaymentViewModel> Initialize()
@@ -141,16 +145,18 @@ namespace Interest.ViewModels
             }
         }
 
+        #region StartMonth
         private DateTime _startMonth;
 
         public DateTime StartMonth
         {
             get { return _startMonth; }
             set { SetProperty(ref _startMonth, value); }
-        }
+        } 
+        #endregion
 
         #region UnscheduledRepaymentPercentage
-        private double _unscheduledRepaymentPercentage = 0.05;
+        private double _unscheduledRepaymentPercentage;
 
         public double UnscheduledRepaymentPercentage
         {
@@ -179,30 +185,37 @@ namespace Interest.ViewModels
         }
 
         #endregion
-        private double _borrowingRate = 0.0084;
+
+        #region BorrowingRate
+        private double _borrowingRate;
         public double BorrowingRate
         {
             get { return _borrowingRate; }
             set { SetProperty(ref _borrowingRate, value); }
         }
+        #endregion
 
-        private double _loanAmount = 381000;
+        #region LoanAmount
+        private double _loanAmount;
         public double LoanAmount
         {
             get { return _loanAmount; }
             set { SetProperty(ref _loanAmount, value); }
         }
+        #endregion
 
-        private double _monthlyPayment = 1139.83;
+        #region MonthlyPayment
+        private double _monthlyPayment;
         private IEnumerable<PaymentViewModel> _payments;
 
         public double MonthlyPayment
         {
             get { return _monthlyPayment; }
             set { SetProperty(ref _monthlyPayment, value); }
-        }
+        } 
+        #endregion
 
-        public DelegateCommand CreateCommand { get; private set; }
+        public DelegateCommand ResetCommand { get; private set; }
         public DelegateCommand UpdateCommand { get; private set; }
     }
 }

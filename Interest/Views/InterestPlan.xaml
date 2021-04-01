@@ -77,7 +77,7 @@
             <Label Content="{Binding ResidualDebt}" />
         </StackPanel>
         <StackPanel>
-            <Button Content="Create" Command="{Binding CreateCommand}"/>
+            <Button Content="Create" Command="{Binding ResetCommand}"/>
             <Button Content="Update" Command="{Binding UpdateCommand}"/>
         </StackPanel>
     </StackPanel>
