@@ -9,22 +9,26 @@ namespace Interest.ViewModels
             double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment,
             Action<object> calculateCommandExecute)
         {
+            // standard repayment: based on necessary input the reduced debt and the interest are calculated
             _calculateCommandExecute = calculateCommandExecute;
+
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
             var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowingPercentagePerYear);
+
             _paymentModel = new PaymentModel(date, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
         }
 
         public PaymentViewModel(DateTime date, double debt,
             double borrowingPercentagePerYear,
             Action<object> calculateCommandExecute)
-        // no repayment, interest cost only
         {
+            // no repayment, interest cost only
             _calculateCommandExecute = calculateCommandExecute;
 
             var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
             var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowingPercentagePerYear);
+           
             _paymentModel = new PaymentModel(date, new InputValue<double>(interest, InputType.Auto), debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
         }
 
@@ -32,9 +36,10 @@ namespace Interest.ViewModels
             double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment,
             double reducedDebt, double interestPerYear,
             Action<object> calculateCommandExecute)
-        // full repayment
         {
+            // full repayment
             _calculateCommandExecute = calculateCommandExecute;
+
             _paymentModel = new PaymentModel(date, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interestPerYear);
         }
 

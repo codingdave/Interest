@@ -109,72 +109,10 @@ namespace Interest.ViewModels
 
         public IEnumerable<PaymentViewModel> Calculate()
         {
-            var ret = new List<PaymentViewModel>();
-            var date = StartMonth;
-            var endMonth = StartMonth.AddYears(Years);
-            var residualDebt = LoanAmount;
-            var borrowingPercentagePerYear = BorrowingPercentagePerYear;
-            PaymentViewModel p;
-
-            InputValue<double> unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
-            InputValue<double> payment = default;
-            var redemptionFreeMonths = RedemptionFreeMonths;
-            while (date < endMonth && residualDebt > 0)
-            {
-                date = date.AddMonths(1);
-
-                if (ret.Count < redemptionFreeMonths)
-                {
-                    // we only pay interest, no redemption
-                    p = new PaymentViewModel(date, residualDebt, borrowingPercentagePerYear, CalculateCommand.Execute);
-                }
-                else
-                {
-                    if (IsFullRepayment)
-                    {
-                        // payment: 471.60
-                        // interest_0: 64.17
-                        // full repayment
-                        var borrowingRatePerYear = borrowingPercentagePerYear / 100.0;
-                        var totalInterestFactor = Math.Pow(1.0 + borrowingRatePerYear, Years - 1);
-                        var totalnterestPercentage = totalInterestFactor / (totalInterestFactor - 1);
-                        var interestRatePerYear = borrowingRatePerYear * totalnterestPercentage;
-                        var interestPercentagePerYear = interestRatePerYear * 100;
-                        payment = new InputValue<double>(
-                            Calculator.GetInterestCostPerMonth(
-                                Calculator.GetReducedDebt(residualDebt, unscheduledRepayment), interestPercentagePerYear), InputType.Auto);
-                        var debt = Calculator.GetReducedDebt(residualDebt, unscheduledRepayment);
-
-                        p = new PaymentViewModel(date, payment, debt, interestPercentagePerYear, unscheduledRepayment,
-                            debt, interestPercentagePerYear,
-                            CalculateCommand.Execute);
-                        residualDebt = p.ResidualDebt;
-                    }
-                    else
-                    {
-                        if (Payments?.Count() > ret.Count)
-                        {
-                            // we keep manual modifications
-                            var oldPayment = Payments.ElementAt(ret.Count);
-                            unscheduledRepayment = oldPayment.UnscheduledRepayment.InputType == InputType.Manual ? oldPayment.UnscheduledRepayment : default;
-                            payment = oldPayment.Payment.InputType == InputType.Manual ? oldPayment.Payment : new InputValue<double>(RedemptionAmount, InputType.Auto);
-                        }
-
-                        if (unscheduledRepayment.InputType == InputType.Auto && IsApplyAllUnscheduledRepayments && date.Month == StartMonth.AddMonths(1).Month)
-                        {
-                            // on optimize we override everythings
-                            unscheduledRepayment = new InputValue<double>(LoanAmount * UnscheduledRepaymentPercentage / 100.0, InputType.Auto);
-                        }
-                        unscheduledRepayment = new InputValue<double>(Math.Min(unscheduledRepayment.Value, residualDebt), unscheduledRepayment.InputType);
-
-                        p = new PaymentViewModel(date, payment, residualDebt, borrowingPercentagePerYear, unscheduledRepayment, CalculateCommand.Execute);
-                    }
-                }
-
-                ret.Add(p);
-                residualDebt = p.ResidualDebt;
-            }
-            return ret;
+            return Calculator.GetPaymentPlan(Payments,
+                StartMonth, Years, LoanAmount, 
+                BorrowingPercentagePerYear, UnscheduledRepaymentPercentage, RedemptionAmount,   RedemptionFreeMonths,
+                IsApplyAllUnscheduledRepayments, IsFullRepayment, CalculateCommand.Execute);
         }
 
         #region RedemptionPercentage
