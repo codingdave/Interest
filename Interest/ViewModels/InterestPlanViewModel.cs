@@ -72,6 +72,7 @@ namespace Interest.ViewModels
             int i = 0;
             while (month < endMonth && currentDebt > 0)
             {
+                month = month.AddMonths(1);
                 var p = Payments.ElementAt(i);
                 var unscheduledRepayment = IsApplyAllUnscheduledRepayments && p.Month.Month == StartMonth.AddMonths(1).Month
                     ? GetRequiredAmount(InitialPayments.First().InitialDebt * UnscheduledRepaymentPercentage, currentDebt)
