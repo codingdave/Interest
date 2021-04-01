@@ -39,8 +39,14 @@
         <local:PercentageConverter x:Key="percentageConverter" />
     </Page.Resources>
 
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-        <WrapPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <WrapPanel Grid.Row="0">
             <Label Content="Loan (€):" />
             <TextBox Text="{Binding LoanAmount, StringFormat=C2, ConverterCulture='de-DE'}"/>
             <Label Content="Borrowing (%):" />
@@ -57,8 +63,8 @@
             <TextBox Text="{Binding UnscheduledRepaymentPercentage, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" />
             <CheckBox Content="optimize extra repayments:" IsChecked="{Binding IsApplyAllUnscheduledRepayments}"/>
         </WrapPanel>
-
-        <DataGrid ItemsSource="{Binding Payments}" Height="800" AutoGenerateColumns="False" CanUserAddRows="false">
+        <DataGrid Grid.Row="1"
+            ItemsSource="{Binding Payments}" AutoGenerateColumns="False" CanUserAddRows="false">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Month, StringFormat=d, ConverterCulture='de-DE'}" Header="Month" FontWeight="Light" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Path=InitialDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Remaining Debt" IsReadOnly="True"/>
@@ -67,13 +73,9 @@
                 <DataGridTextColumn Binding="{Binding Path=MonthlyPayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Payment" />
                 <DataGridTextColumn Binding="{Binding Path=Interest, StringFormat=C2, ConverterCulture='de-DE'}" Header="Interest" IsReadOnly="True" />
                 <DataGridTextColumn Binding="{Binding Path=Repayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Repayment" IsReadOnly="True" />
-                <!--<DataGridTextColumn Binding="{Binding Path=RedemptionPercentage, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" Header="Redemption Rate" IsReadOnly="True" />-->
-                <!--<DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Residual Debt" IsReadOnly="True" />-->
-                <!--<DataGridTextColumn Binding="{Binding Path=BorrowingPercentage, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" Header="Borrowing Rate" IsReadOnly="True" />-->
             </DataGrid.Columns>
         </DataGrid>
-
-        <StackPanel>
+        <StackPanel Grid.Row="2">
             <Label Content="TotalInterest: " />
             <Label Content="{Binding TotalInterest}" />
             <Label Content="Remaining Debt: " />
@@ -81,9 +83,9 @@
             <Label Content="Redemption Rate: " />
             <Label Content="{Binding RedemptionPercentage, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" />
         </StackPanel>
-        <StackPanel>
+        <StackPanel Grid.Row="3">
             <Button Content="Reset" Command="{Binding ResetCommand}"/>
             <Button Content="Update" Command="{Binding UpdateCommand}"/>
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </Page>
