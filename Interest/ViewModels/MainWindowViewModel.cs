@@ -10,10 +10,23 @@ namespace Interest.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, ICreateWindow, IMainWindowViewModel
     {
+        public MainWindowViewModel()
+        {
+            if (!System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
+            {
+                throw new InvalidOperationException("Design time only");
+            }
+
+            var options = new InterestOptions();
+            options.InterestPlans.Add(new InterestPlanViewModelOptions() { Title = "First" });
+            options.InterestPlans.Add(new InterestPlanViewModelOptions() { Title = "Second" });
+            InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>(options.InterestPlans.Select(ip => new InterestPlanViewModel(ip)));
+        }
+
         public MainWindowViewModel(IConfiguration configuration)
         {
             var options = configuration.Get<InterestOptions>();
-            if (options == null)
+            if (options == null || options.InterestPlans.Count == 0)
             {
                 options = new InterestOptions();
                 options.InterestPlans.Add(new InterestPlanViewModelOptions());

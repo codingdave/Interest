@@ -1,6 +1,5 @@
 ﻿using Interest.Commands;
 using Interest.Options;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,14 @@ namespace Interest.ViewModels
     {
         internal InterestPlanViewModelOptions Values { get; }
         private IEnumerable<PaymentViewModel> _payments;
+
+        public InterestPlanViewModel() : this(new InterestPlanViewModelOptions())
+        {
+            if (!System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
+            {
+                throw new InvalidOperationException("Design time only");
+            }
+        }
 
         public InterestPlanViewModel(InterestPlanViewModelOptions values)
         {

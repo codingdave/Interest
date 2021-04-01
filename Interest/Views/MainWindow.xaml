@@ -22,18 +22,22 @@
     </Window.Resources>
 
     <Grid HorizontalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="371*"/>
+            <ColumnDefinition Width="1368*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" HorizontalAlignment="Stretch">
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,3611" Grid.RowSpan="2">
             <MenuItem Header="Add" Command="{Binding AddInterestPlanCommand}" HorizontalAlignment="Left"/>
             <MenuItem Header="About" Command="{Binding CreateWindowCommand}" HorizontalAlignment="Right"/>
         </Menu>
 
-        <TabControl Margin="5 1 5 1" Grid.Row="1" ItemsSource="{Binding InterestPlanViewModels}">
+        <TabControl Margin="5,1,5,1" Grid.Row="1" ItemsSource="{Binding InterestPlanViewModels}" Grid.ColumnSpan="2">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <TextBox Text="{Binding Title}" IsReadOnly="False" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
@@ -41,7 +45,7 @@
             </TabControl.ItemTemplate>
         </TabControl>
 
-        <Border Margin="5 1 5 1" Grid.Row="2" Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="3">
+        <Border Margin="5,1,5,1" Grid.Row="2" Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="3" Grid.ColumnSpan="2">
             <StackPanel>
                 <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="TotalInterest: "/>
