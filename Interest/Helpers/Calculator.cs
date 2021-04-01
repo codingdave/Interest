@@ -34,8 +34,7 @@ namespace Interest
             DateTime startMonth, int years, double loan, double percentagePerYear,
             double redemptionPercentage, int redemptionFreeMonths,
             bool isApplyAllUnscheduledRepayments, double unscheduledRepaymentPercentage,
-            bool isFullRepayment,
-            Action<object> updateCalculation)
+            bool isFullRepayment)
         {
             var ret = new List<PaymentViewModel>();
             var date = startMonth.AddMonths(1);
@@ -46,16 +45,16 @@ namespace Interest
             var redemptionAmount = GetRedemptionAmount(loan, borrowingPercentagePerYear, redemptionPercentage);
 
             InputValue<double> unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
-            InputValue<double> payment = default;
             while (date < endMonth && residualDebt > 0)
             {
                 if (ret.Count < redemptionFreeMonths)
                 {
                     // we only pay interest, no redemption
-                    p = new PaymentViewModel(date, residualDebt, borrowingPercentagePerYear, updateCalculation);
+                    p = new PaymentViewModel(date, residualDebt, borrowingPercentagePerYear);
                 }
                 else
                 {
+                    InputValue<double> payment;
                     if (isFullRepayment)
                     {
                         // payment: 471.60
@@ -70,8 +69,7 @@ namespace Interest
                         var debt = GetReducedDebt(residualDebt, unscheduledRepayment);
 
                         p = new PaymentViewModel(date, payment, debt, interestPercentagePerYear, unscheduledRepayment,
-                            debt, interestPercentagePerYear,
-                            updateCalculation);
+                            debt, interestPercentagePerYear);
                     }
                     else
                     {
@@ -94,7 +92,7 @@ namespace Interest
                         }
                         unscheduledRepayment = new InputValue<double>(Math.Min(unscheduledRepayment.Value, residualDebt), unscheduledRepayment.InputType);
 
-                        p = new PaymentViewModel(date, payment, residualDebt, borrowingPercentagePerYear, unscheduledRepayment, updateCalculation);
+                        p = new PaymentViewModel(date, payment, residualDebt, borrowingPercentagePerYear, unscheduledRepayment);
                     }
                 }
 

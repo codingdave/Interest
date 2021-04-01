@@ -25,8 +25,7 @@ namespace Interest.Tests
                 redemptionFreeMonths: 12,
                 isApplyAllUnscheduledRepayments: false,
                 unscheduledRepaymentPercentage: 5,
-                isFullRepayment: false,
-                updateCalculation: (o) => { }).ToList();
+                isFullRepayment: false).ToList();
 
             Assert.True(payments.Count <= years * 12, "payment plan has at most as many entries as months but can stop before if mortage is payed back");
             // interest increases, residual dept decreases

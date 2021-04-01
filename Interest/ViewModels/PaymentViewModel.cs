@@ -6,12 +6,9 @@ namespace Interest.ViewModels
     public class PaymentViewModel : ViewModelBase
     {
         public PaymentViewModel(DateTime date, InputValue<double> payment, double debt,
-            double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment,
-            Action<object> calculateCommandExecute)
+            double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment)
         {
             // standard repayment: based on necessary input the reduced debt and the interest are calculated
-            _calculateCommandExecute = calculateCommandExecute;
-
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
             var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowingPercentagePerYear);
 
@@ -19,12 +16,9 @@ namespace Interest.ViewModels
         }
 
         public PaymentViewModel(DateTime date, double debt,
-            double borrowingPercentagePerYear,
-            Action<object> calculateCommandExecute)
+            double borrowingPercentagePerYear)
         {
             // no repayment, interest cost only
-            _calculateCommandExecute = calculateCommandExecute;
-
             var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
             var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowingPercentagePerYear);
@@ -34,17 +28,13 @@ namespace Interest.ViewModels
 
         public PaymentViewModel(DateTime date, InputValue<double> payment, double debt,
             double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment,
-            double reducedDebt, double interestPerYear,
-            Action<object> calculateCommandExecute)
+            double reducedDebt, double interestPerYear)
         {
             // full repayment
-            _calculateCommandExecute = calculateCommandExecute;
-
             _paymentModel = new PaymentModel(date, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interestPerYear);
         }
 
         PaymentModel _paymentModel;
-        private Action<object> _calculateCommandExecute;
 
         public DateTime Date
         {
@@ -59,7 +49,6 @@ namespace Interest.ViewModels
             {
                 if (SetProperty(ref _paymentModel.Payment, value))
                 {
-                    _calculateCommandExecute?.Invoke(this);
                 }
             }
         }
@@ -71,7 +60,6 @@ namespace Interest.ViewModels
             {
                 if (SetProperty(ref _paymentModel.BorrowingPercentagePerYear, value))
                 {
-                    _calculateCommandExecute?.Invoke(this);
                 }
             }
         }
@@ -83,7 +71,6 @@ namespace Interest.ViewModels
             {
                 if (SetProperty(ref _paymentModel.UnscheduledRepayment, value))
                 {
-                    _calculateCommandExecute?.Invoke(this);
                 }
             }
         }

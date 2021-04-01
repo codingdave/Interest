@@ -2,6 +2,7 @@
 using Interest.Options;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Interest.ViewModels
@@ -9,51 +10,65 @@ namespace Interest.ViewModels
     public class InterestPlanViewModel : ViewModelBase
     {
         internal InterestPlanViewModelOptions Values { get; }
-        private IEnumerable<PaymentViewModel> _payments;
 
         public InterestPlanViewModel(InterestPlanViewModelOptions values)
         {
             Values = values;
+            Payments = new ObservableCollection<PaymentViewModel>();
 
             CalculateCommand = new DelegateCommand(() =>
             {
-                if (!_isCalculateCommandRunning)
+                if (!_isPlanUpdating)
                 {
-                    _isCalculateCommandRunning = true;
-                    Payments = Calculate();
+                    _isPlanUpdating = true;
+                    var newCalculation = Calculate(Payments);
+                    Payments.Clear();
+                    foreach (var newCalculationItem in newCalculation)
+                    {
+                        Payments.Add(newCalculationItem);
+                        newCalculationItem.PropertyChanged += PaymentViewModel_PropertyChanged;
+                    }
+                    _isPlanUpdating = false;
                 }
-                _isCalculateCommandRunning = false;
             });
             ResetCommand = new DelegateCommand(() => ResetAllInputValues());
 
             CalculateCommand.Execute();
         }
 
+        private void PaymentViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            // whenever an item is modified inside we want the complete plan to be recalculated
+            CalculateCommand.Execute();
+        }
+
         private void ResetAllInputValues()
         {
+            _isPlanUpdating = true;
             foreach (var p in Payments)
             {
                 p.Payment = new InputValue<double>(p.Payment.Value, InputType.Auto);
                 p.UnscheduledRepayment = new InputValue<double>(p.UnscheduledRepayment.Value, InputType.Auto);
             }
+            _isPlanUpdating = false;
             CalculateCommand.Execute();
         }
 
         public DelegateCommand CalculateCommand { get; private set; }
         public DelegateCommand ResetCommand { get; }
 
-        public IEnumerable<PaymentViewModel> Payments
+        public ObservableCollection<PaymentViewModel> Payments
         {
-            get => _payments;
-            set
-            {
-                if (SetProperty(ref _payments, value))
-                {
-                    RaisePropertyChanged(nameof(TotalInterest));
-                    RaisePropertyChanged(nameof(ResidualDebt));
-                    RaisePropertyChanged(nameof(RedemptionPercentage));
-                }
-            }
+            get;
+            //set
+            //{
+            //    if (SetProperty(ref _payments, value))
+            //    {
+            //        RaisePropertyChanged(nameof(TotalInterest));
+            //        RaisePropertyChanged(nameof(ResidualDebt));
+            //        RaisePropertyChanged(nameof(RedemptionPercentage));
+            //    }
+            //}
         }
 
         public double ResidualDebt
@@ -85,9 +100,9 @@ namespace Interest.ViewModels
             }
         }
 
-        public IEnumerable<PaymentViewModel> Calculate()
+        public IEnumerable<PaymentViewModel> Calculate(IEnumerable<PaymentViewModel> previousPayments)
         {
-            return Calculator.GetPaymentPlan(previousPayments: Payments,
+            return Calculator.GetPaymentPlan(previousPayments: previousPayments,
                 startMonth: StartMonth,
                 years: Years,
                 loan: LoanAmount,
@@ -96,8 +111,7 @@ namespace Interest.ViewModels
                 redemptionFreeMonths: RedemptionFreeMonths,
                 isApplyAllUnscheduledRepayments: IsApplyAllUnscheduledRepayments,
                 unscheduledRepaymentPercentage: UnscheduledRepaymentPercentage,
-                isFullRepayment: IsFullRepayment,
-                updateCalculation: CalculateCommand.Execute);
+                isFullRepayment: IsFullRepayment);
         }
 
         public double RedemptionAmount
@@ -210,7 +224,7 @@ namespace Interest.ViewModels
             get
             {
                 return IsFullRepayment ?
-                  _payments.Last().BorrowingPercentagePerYear :
+                  Payments.Last().BorrowingPercentagePerYear :
                   Values.BorrowingPercentagePerYear;
             }
             set
@@ -252,7 +266,7 @@ namespace Interest.ViewModels
             return Values.ToString();
         }
 
-        private bool _isCalculateCommandRunning;
+        private bool _isPlanUpdating;
 
         #region IsFullRepayment
         private bool _isFullRepayment;
