@@ -156,10 +156,8 @@
         </DataGrid>
 
         <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Total Interest: "/>
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding Path=TotalInterest, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" />
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Residual Debt: " />
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" />
+            <TextBlock Padding="5 0 5 0" Margin="10 10 10 10" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=TotalInterest, StringFormat=Interest: {0:C}, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}"/>
+            <TextBlock Padding="5 0 5 0" Margin="10 10 10 10" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=ResidualDebt, StringFormat=Residual Debt: {0:C}, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}"/>
         </WrapPanel>
         
         <WrapPanel Grid.Row="3" HorizontalAlignment="Center">

@@ -19,7 +19,7 @@ namespace Interest
     {
         public App()
         {
-            // better numbers for Total Interest and Residual Debt
+            // create options menu, place language there 
             // classes for percentage, currency, fraction?
             // MainWindow: Years, StartMonth
             // GridView: Show Index for month
@@ -38,7 +38,10 @@ namespace Interest
             // Start the application with the culture selected
             var configuration = host.Services.GetService<IConfiguration>();
             var options = configuration.Get<Rootobject>();
-            System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(options.CultureInfo);
+            if (options?.CultureInfo != null)
+            {
+                System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(options.CultureInfo);
+            }
 
             var vm = host.Services.GetService<MainWindowViewModel>();
             var mw = host.Services.GetService<MainWindow>();
