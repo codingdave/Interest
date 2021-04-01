@@ -28,6 +28,9 @@ namespace Interest.ViewModels
                         Payments.Add(newCalculationItem);
                         newCalculationItem.PropertyChanged += PaymentViewModel_PropertyChanged;
                     }
+                    RaisePropertyChanged(nameof(TotalInterest));
+                    RaisePropertyChanged(nameof(ResidualDebt));
+                    RaisePropertyChanged(nameof(RedemptionPercentage));
                     _isPlanUpdating = false;
                 }
             });
@@ -59,19 +62,7 @@ namespace Interest.ViewModels
         public DelegateCommand CalculateCommand { get; private set; }
         public DelegateCommand ResetCommand { get; }
 
-        public ObservableCollection<PaymentViewModel> Payments
-        {
-            get;
-            //set
-            //{
-            //    if (SetProperty(ref _payments, value))
-            //    {
-            //        RaisePropertyChanged(nameof(TotalInterest));
-            //        RaisePropertyChanged(nameof(ResidualDebt));
-            //        RaisePropertyChanged(nameof(RedemptionPercentage));
-            //    }
-            //}
-        }
+        public ObservableCollection<PaymentViewModel> Payments { get; }
 
         public double ResidualDebt
         {
