@@ -1,5 +1,6 @@
 ﻿using Interest.Options;
 using Microsoft.Extensions.Configuration;
+using System.Globalization;
 
 namespace Interest.ViewModels
 {
@@ -10,6 +11,7 @@ namespace Interest.ViewModels
             InterestPlanViewModels.Clear();
             InterestPlanViewModels.Add(new InterestPlanViewModel(InterestPlanViewModelOption.GetExample1()));
             InterestPlanViewModels.Add(new InterestPlanViewModel(InterestPlanViewModelOption.GetExample2()));
+            Cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
         }
     }
 }

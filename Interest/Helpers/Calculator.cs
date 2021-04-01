@@ -44,7 +44,7 @@ namespace Interest
             PaymentViewModel p;
             var redemptionAmount = GetRedemptionAmount(loan, borrowingPercentagePerYear, redemptionPercentage);
 
-            InputValue<double> unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
+            InputValue<double> unscheduledRepayment = new(0, InputType.Auto);
             while (date < endMonth && residualDebt > 0)
             {
                 if (ret.Count < redemptionFreeMonths)

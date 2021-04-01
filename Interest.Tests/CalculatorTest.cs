@@ -12,7 +12,7 @@ namespace Interest.Tests
     {
         [Theory]
         [InlineData(20)]
-        void StandardPlan(int years)
+        public void StandardPlan(int years)
         {
             IEnumerable<PaymentViewModel> previousPayments = new List<PaymentViewModel>();
             var payments = Calculator.GetPaymentPlan(

@@ -1,4 +1,5 @@
-﻿using Interest.ViewModels;
+﻿using Interest.Options;
+using Interest.ViewModels;
 using Interest.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,6 @@ namespace Interest
     {
         public App()
         {
-            // make globalization a user parameter
             // better numbers for Total Interest and Residual Debt
             // classes for percentage, currency, fraction?
             // MainWindow: Years, StartMonth
@@ -33,10 +33,12 @@ namespace Interest
         {
             base.OnStartup(e);
 
-            //// make binding use the correct language
-            //FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
-
             using IHost host = CreateHostBuilder(e.Args).Build();
+
+            // Start the application with the culture selected
+            var configuration = host.Services.GetService<IConfiguration>();
+            var options = configuration.Get<Rootobject>();
+            System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(options.CultureInfo);
 
             var vm = host.Services.GetService<MainWindowViewModel>();
             var mw = host.Services.GetService<MainWindow>();

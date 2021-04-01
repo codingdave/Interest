@@ -20,7 +20,7 @@ namespace Interest.Views
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if(DataContext is IOnClose ioc)
+            if (DataContext is IOnClose ioc)
             {
                 ioc.OnClose();
             }
@@ -36,6 +36,15 @@ namespace Interest.Views
                     v.ShowDialog();
                 };
             }
+
+            if (DataContext is IShowMessage ism)
+            {
+                ism.ShowMessage = (s) =>
+                {
+                    MessageBox.Show(s, "", MessageBoxButton.OK);
+                };
+            }
+
         }
     }
 }
