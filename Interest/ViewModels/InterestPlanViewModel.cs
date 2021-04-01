@@ -9,8 +9,10 @@ namespace Interest.ViewModels
 {
     public class InterestPlanViewModel : BindableBase
     {
-        public InterestPlanViewModel()
+        public InterestPlanViewModel(string title = null)
         {
+            Title = title;
+
             _conf = new ConfigurationManagerReaderWriter();
 
             //var now = DateTime.Now;
@@ -50,25 +52,14 @@ namespace Interest.ViewModels
             var month = StartMonth;
             var endMonth = StartMonth.AddYears(Years);
             var monthlyPayment = RedemptionAmount;
+            var residualDebt = LoanAmount;
 
-            while (month < endMonth)
+            while (month < endMonth && residualDebt > 0)
             {
                 month = month.AddMonths(1);
-                var residualDebt = ret.Any() ? ret.Last().ResidualDebt : LoanAmount;
-
-                var remainingDebtPlusRate = residualDebt + residualDebt * BorrowingPercentage / 12.0;
-                if (remainingDebtPlusRate >= monthlyPayment)
-                {
-                    var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingPercentage, 0);
-                    ret.Add(p);
-                }
-                else
-                {
-                    monthlyPayment = remainingDebtPlusRate;
-                    var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingPercentage, 0);
-                    ret.Add(p);
-                    break;
-                }
+                var p = new PaymentViewModel(month, monthlyPayment, residualDebt, BorrowingPercentage, 0);
+                ret.Add(p);
+                residualDebt = p.ResidualDebt;
             }
             return ret;
         }
@@ -76,22 +67,23 @@ namespace Interest.ViewModels
         public void Update()
         {
             var ret = new List<PaymentViewModel>();
-            var currentDebt = LoanAmount;
             var month = StartMonth;
             var endMonth = StartMonth.AddYears(Years);
+            var residualDebt = LoanAmount;
+
             int i = 0;
             var numPayments = Payments.Count();
-            while (month < endMonth && currentDebt > 0)
+            while (month < endMonth && residualDebt > 0)
             {
                 month = month.AddMonths(1);
                 var unscheduledRepayment = IsApplyAllUnscheduledRepayments && month.Month == StartMonth.AddMonths(1).Month
-                    ? GetRequiredAmount(InitialPayments.First().InitialDebt * UnscheduledRepaymentPercentage / 100.0, currentDebt)
+                    ? GetRequiredAmount(InitialPayments.First().Debt * UnscheduledRepaymentPercentage / 100.0, residualDebt)
                     : numPayments > i
                         ? Payments.ElementAt(i).UnscheduledRepayment
                         : 0.0;
-                var payment = new PaymentViewModel(month, GetRequiredAmount(RedemptionAmount, currentDebt - unscheduledRepayment), currentDebt, BorrowingPercentage, unscheduledRepayment);
-                currentDebt = payment.ResidualDebt;
-                ret.Add(payment);
+                var p = new PaymentViewModel(month, RedemptionAmount, residualDebt, BorrowingPercentage, unscheduledRepayment);
+                ret.Add(p);
+                residualDebt = p.ResidualDebt;
                 i++;
             }
 
@@ -100,9 +92,7 @@ namespace Interest.ViewModels
 
         private static double GetRequiredAmount(double maximumAmount, double currentDebt)
         {
-            var c = currentDebt;
-            double ret = c >= maximumAmount ? maximumAmount : c;
-            return ret;
+            return Math.Min(maximumAmount, currentDebt);
         }
 
         public IEnumerable<PaymentViewModel> InitialPayments { get; private set; }
@@ -270,6 +260,17 @@ namespace Interest.ViewModels
 
 
         private IEnumerable<PaymentViewModel> _payments;
+
+        #region Title
+        private string _title;
+        public string Title
+        {
+            get => _title;
+            set => _ = SetProperty(ref _title, value);
+        } 
+        #endregion
+
+
         private ConfigurationManagerReaderWriter _conf;
 
         public DelegateCommand ResetCommand { get; private set; }

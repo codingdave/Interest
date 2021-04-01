@@ -5,5 +5,4 @@
              xmlns:view="clr-namespace:Interest.Views"
              xmlns:prism="http://prismlibrary.com/"
              >
-    <!--StartupUri="view:MainWindow.xaml"-->
 </prism:PrismApplication>

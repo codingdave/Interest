@@ -18,7 +18,7 @@ namespace Interest.Tests
             var p = new Payment(date, monthlyPayment, initialDebt, BorrowingPercentagePerYear, unscheduledRepayment);
             Assert.Equal(date, p.Month);
             Assert.Equal(monthlyPayment, p.MonthlyPayment);
-            Assert.Equal(initialDebt, p.InitialDebt);
+            Assert.Equal(initialDebt, p.Debt);
         }
 
         [Fact]

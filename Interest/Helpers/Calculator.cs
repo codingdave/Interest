@@ -8,7 +8,6 @@ namespace Interest
 {
     public static class Calculator
     {
-
         public static double GetRepayment(double monthlyPayment, double interest)
         {
             return monthlyPayment - interest;
@@ -25,7 +24,7 @@ namespace Interest
 
         public static double GetResidualDebt(double reducedDebt, double repayment)
         {
-            return reducedDebt - repayment;
+            return Math.Max(reducedDebt - repayment, 0);
         }
 
         public static double GetReducedDebt(double initialDebt, double unscheduledRepayment)

@@ -5,12 +5,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Prism.DryIoc;
 using Prism.Ioc;
-using Serilog;
-using Serilog.Core;
 using System;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 
 namespace Interest
@@ -20,17 +19,8 @@ namespace Interest
     /// </summary>
     public partial class App : PrismApplication
     {
-        private Logger _logger;
-
         public App()
         {
-            _logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day, fileSizeLimitBytes: null)
-                .CreateLogger();
-
-            _logger.Information("Application started");
-            _logger.Information("GetFolderPath: {0}", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -41,13 +31,13 @@ namespace Interest
 
         static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostingContext, configuration) =>
+                .ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
                 {
-                    configuration.Sources.Clear();
+                    configurationBuilder.Sources.Clear();
 
                     IHostEnvironment env = hostingContext.HostingEnvironment;
 
-                    configuration
+                    configurationBuilder
                         .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: true)
                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                         .AddIniFile($"appsettings.ini", optional: true, reloadOnChange: true)
@@ -57,7 +47,7 @@ namespace Interest
                         .AddEnvironmentVariables(prefix: "CustomPrefix_") 
                     ;
 
-                    IConfigurationRoot configurationRoot = configuration.Build();
+                    IConfigurationRoot configurationRoot = configurationBuilder.Build();
 
                     //TransientFaultHandlingOptions transientOptions = new();
                     //configurationRoot.GetSection(nameof(TransientFaultHandlingOptions)).Bind(transientOptions);
@@ -65,7 +55,7 @@ namespace Interest
                     //System.Diagnostics.Debug.WriteLine($"TransientFaultHandlingOptions.AutoRetryDelay={transientOptions.AutoRetryDelay}");
 
                     foreach ((string key, string value) in
-                        configuration.Build().AsEnumerable().Where(t => t.Value is not null))
+                        configurationRoot.AsEnumerable().Where(t => t.Value is not null))
                     {
                         System.Diagnostics.Debug.WriteLine($"{key}={value}");
                     }
@@ -77,7 +67,15 @@ namespace Interest
             //containerRegistry.RegisterSingleton<ApplicationService>();
             //containerRegistry.RegisterSingleton<CoreRoutines>();
             //containerRegistry.RegisterSingleton<DialogService>();
-            containerRegistry.RegisterSingleton<LoggerConfiguration>();
+
+            // Configure Serilog and the sinks at the startup of the app
+            //var logger = new LoggerConfiguration()
+            //    .MinimumLevel.Debug()
+            //    .WriteTo.Console()
+            //    .WriteTo.File(path: "MyApp.log", encoding: Encoding.UTF8)
+            //    .CreateLogger();
+            // Register Serilog with Prism
+            //containerRegistry.RegisterSerilog(logger);
         }
 
         protected override Window CreateShell()

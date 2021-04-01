@@ -15,29 +15,23 @@
         WindowStyle="ThreeDBorderWindow"
         ResizeMode="CanResizeWithGrip"
         Title="InterestCalculator">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:InterestPlanViewModel}">
+            <view:InterestPlan/>
+        </DataTemplate>
+    </Window.Resources>
     <DockPanel LastChildFill="True">
-        <Menu DockPanel.Dock="Top" HorizontalAlignment="Right">
-            <MenuItem Header="About" Command="{Binding CreateWindowCommand}">
-                <!--<view:About/>-->
-            </MenuItem>
+        <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+            <MenuItem Header="Add" Command="{Binding AddInterestPlanCommand}" HorizontalAlignment="Left"/>
+            <MenuItem Header="About" Command="{Binding CreateWindowCommand}" HorizontalAlignment="Right"/>
         </Menu>
-        <!--Click="DisplayPopup"-->
-        <!--<Button HorizontalAlignment="Left" Width="150" Margin="20,10,0,0" DockPanel.Dock="Top">
-            <StackPanel>
-                <TextBlock>Display Your Popup Text</TextBlock>
-                <Popup Name="myPopup">
-                    <TextBlock Name="myPopupText" Background="LightBlue" Foreground="Blue">Popup Text</TextBlock>
-                </Popup>
-            </StackPanel>
-        </Button>-->
-        <!--Click="CreatePopup"-->
-        <!--<Button Name="ButtonForPopup" HorizontalAlignment="Left" Width="150" Margin="20,10,0,0">
-            <StackPanel Name="aStackPanel">
-                <TextBlock>Create Popup</TextBlock>
-            </StackPanel>
-        </Button>-->
-
-        <!--<view:About DockPanel.Dock="Right"/>-->
-        <view:InterestPlan Grid.Row="0" DockPanel.Dock="Bottom"/>
+        
+        <TabControl ItemsSource="{Binding InterestPlanViewModels}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBox Text="{Binding Title}" IsReadOnly="False" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,2,10,2" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+        </TabControl>
     </DockPanel>
 </Window>
