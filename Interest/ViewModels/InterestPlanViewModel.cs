@@ -31,8 +31,7 @@ namespace Interest.ViewModels
                     Payments = Calculate();
                 }
                 _isCalculateCommandRunning = false;
-            }
-            );
+            });
             ResetCommand = new DelegateCommand(() => ResetAllInputValues());
 
             CalculateCommand.Execute();

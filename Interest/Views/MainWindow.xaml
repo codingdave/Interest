@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Interest.ViewModels"
         xmlns:view="clr-namespace:Interest.Views"
+        xmlns:converters="clr-namespace:Interest.Converters"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -32,7 +33,8 @@
             <MenuItem Header="About" Command="{Binding CreateWindowCommand}" HorizontalAlignment="Right"/>
         </Menu>
 
-        <TabControl Grid.Row="1" Margin="5,1,5,1" ItemsSource="{Binding InterestPlanViewModels}" SelectedItem="{Binding SelectedInterestPlanViewModel}">
+        <TabControl Grid.Row="1" Margin="5,1,5,1" ItemsSource="{Binding InterestPlanViewModels}" SelectedItem="{Binding SelectedInterestPlanViewModel}"
+                    Visibility="{Binding InterestPlanViewModels, Converter={StaticResource countToVisibilityConverter}, ConverterParameter=0}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Lender}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
@@ -40,7 +42,8 @@
             </TabControl.ItemTemplate>
         </TabControl>
 
-        <Border Grid.Row="2" Margin="5,1,5,1" Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="3">
+        <Border Grid.Row="2" Margin="5,1,5,1" Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="3"
+                 Visibility="{Binding InterestPlanViewModels, Converter={StaticResource countToVisibilityConverter}, ConverterParameter=1}">
             <StackPanel>
                 <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Total Interest: "/>
