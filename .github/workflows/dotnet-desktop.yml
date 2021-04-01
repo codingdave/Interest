@@ -35,8 +35,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
-    - name: Clean
-      run: dotnet clean $env:Solution_Name -c $env:Configuration && dotnet nuget locals all --clear
+    #- name: Clean
+    #  run: dotnet clean $env:Solution_Name --configuration $env:Configuration && dotnet nuget locals all --clear
 
     - name: Restore
       run: 
