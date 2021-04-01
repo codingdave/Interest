@@ -64,20 +64,7 @@ namespace Interest.ViewModels
         public ICommand CreateWindowCommand { get; private set; }
         public Action CreateWindow { get; set; }
 
-        #region InterestPlanViewModels
-        private ObservableCollection<InterestPlanViewModel> _interestPlanViewModels;
-        public ObservableCollection<InterestPlanViewModel> InterestPlanViewModels
-        {
-            get => _interestPlanViewModels;
-            set
-            {
-                if (SetProperty(ref _interestPlanViewModels, value))
-                {
-                    SelectedInterestPlanViewModel = value[0];
-                }
-            }
-        }
-        #endregion
+        public ObservableCollection<InterestPlanViewModel> InterestPlanViewModels { get; }
 
         public ICommand AddInterestPlanCommand { get; set; }
         public DelegateCommand DeleteInterestPlanCommand { get; }
