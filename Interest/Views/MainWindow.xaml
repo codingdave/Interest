@@ -15,12 +15,13 @@
         Title="InterestCalculator"
         >
     <Window.Resources>
+        <converters:CountToVisibilityConverter x:Key="countToVisibilityConverter" />
         <DataTemplate DataType="{x:Type vm:InterestPlanViewModel}">
             <view:InterestPlan/>
         </DataTemplate>
     </Window.Resources>
 
-    <Grid HorizontalAlignment="Center">
+    <Grid HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -34,7 +35,7 @@
         </Menu>
 
         <TabControl Grid.Row="1" Margin="5,1,5,1" ItemsSource="{Binding InterestPlanViewModels}" SelectedItem="{Binding SelectedInterestPlanViewModel}"
-                    Visibility="{Binding InterestPlanViewModels, Converter={StaticResource countToVisibilityConverter}, ConverterParameter=0}">
+            Visibility="{Binding InterestPlanViewModels, Converter={StaticResource countToVisibilityConverter}, ConverterParameter=0}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Lender}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
@@ -43,7 +44,7 @@
         </TabControl>
 
         <Border Grid.Row="2" Margin="5,1,5,1" Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="3"
-                 Visibility="{Binding InterestPlanViewModels, Converter={StaticResource countToVisibilityConverter}, ConverterParameter=1}">
+            Visibility="{Binding InterestPlanViewModels, Converter={StaticResource countToVisibilityConverter}, ConverterParameter=1}">
             <StackPanel>
                 <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Total Interest: "/>

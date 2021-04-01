@@ -8,5 +8,6 @@
     <Application.Resources>
         <vm:AboutViewModel x:Key="AboutViewModel" />
     </Application.Resources>
+    
     <!--StartupUri="Views/MainWindow.xaml"-->
 </Application>
