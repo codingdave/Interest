@@ -130,7 +130,6 @@ namespace Interest.ViewModels
         }
         #endregion RedemptionPercentage
 
-        //public double RedemptionAmount { get => Calculator.GetRedemptionAmount(LoanAmount, BorrowingPercentagePerYear, RedemptionPercentage); }
 
         #region StartMonth
 
@@ -180,7 +179,7 @@ namespace Interest.ViewModels
 
         #endregion UnscheduledRepaymentPercentage
 
-        #region IsApplyAllÚnscheduledRepayments
+        #region IsApplyAllUnscheduledRepayments
 
         private bool _isApplyAllUnscheduledRepayments;
 
@@ -196,7 +195,7 @@ namespace Interest.ViewModels
             }
         }
 
-        #endregion IsApplyAllÚnscheduledRepayments
+        #endregion IsApplyAllUnscheduledRepayments
 
         #region Years
 
