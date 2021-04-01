@@ -14,24 +14,47 @@
         WindowState="Maximized"
         WindowStyle="ThreeDBorderWindow"
         ResizeMode="CanResizeWithGrip"
-        Title="InterestCalculator">
+        Title="InterestCalculator"
+        >
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:InterestPlanViewModel}">
             <view:InterestPlan/>
         </DataTemplate>
     </Window.Resources>
-    <DockPanel LastChildFill="True">
-        <Menu DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" HorizontalAlignment="Stretch">
             <MenuItem Header="Add" Command="{Binding AddInterestPlanCommand}" HorizontalAlignment="Left"/>
             <MenuItem Header="About" Command="{Binding CreateWindowCommand}" HorizontalAlignment="Right"/>
         </Menu>
-        
-        <TabControl ItemsSource="{Binding InterestPlanViewModels}">
+
+        <TabControl Margin="5 1 5 1" Grid.Row="1" ItemsSource="{Binding InterestPlanViewModels}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBox Text="{Binding Title}" IsReadOnly="False" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,2,10,2" />
+                    <TextBox Text="{Binding Title}" IsReadOnly="False" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
                 </DataTemplate>
             </TabControl.ItemTemplate>
         </TabControl>
-    </DockPanel>
+
+        <Border Margin="5 1 5 1" Grid.Row="2" Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="3">
+            <StackPanel>
+                <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="TotalInterest: "/>
+                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding TotalInterest}" />
+                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Remaining Debt: " />
+                    <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding ResidualDebt}" />
+                </WrapPanel>
+
+                <WrapPanel HorizontalAlignment="Center">
+                    <Button Padding="5 0 5 0" Margin="10 10 10 10" Content="Calculate All" Command="{Binding CalculateAllCommand}"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
 </Window>

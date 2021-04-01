@@ -1,12 +1,8 @@
-﻿using Interest.Views;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Prism.Mvvm;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Interest.ViewModels
@@ -19,7 +15,19 @@ namespace Interest.ViewModels
 
             CreateWindowCommand = new DelegateCommand(() => CreateWindow?.Invoke());
             AddInterestPlanCommand = new DelegateCommand(() => InterestPlanViewModels.Add(new InterestPlanViewModel("...")));
+
+            CalculateAllCommand = new DelegateCommand(() =>
+            {
+                InterestPlanViewModels.ToList().ForEach(ip => ip.CalculateCommand.Execute());
+                RaisePropertyChanged(nameof(TotalInterest));
+                RaisePropertyChanged(nameof(ResidualDebt));
+            });
         }
+
+        public double TotalInterest => InterestPlanViewModels.Select(a => a.TotalInterest).Aggregate((a, b) => a + b);
+
+        public double ResidualDebt => InterestPlanViewModels.Select(a => a.ResidualDebt).Aggregate((a, b) => a + b);
+
         public ICommand CreateWindowCommand { get; private set; }
         public Action CreateWindow { get; set; }
 
@@ -29,9 +37,10 @@ namespace Interest.ViewModels
         {
             get => _interestPlanViewModels;
             set => _ = SetProperty(ref _interestPlanViewModels, value);
-        } 
+        }
         #endregion
 
         public ICommand AddInterestPlanCommand { get; set; }
+        public DelegateCommand CalculateAllCommand { get; }
     }
 }

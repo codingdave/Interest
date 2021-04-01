@@ -13,13 +13,14 @@ namespace Interest
             return monthlyPayment - interest;
         }
 
-        public static double GetInterest(double reducedDebt, double BorrowingPercentage)
+        public static double GetInterest(double reducedDebt, double borrowingPercentagePerYear)
         {
-            return reducedDebt * BorrowingPercentage;
+            return reducedDebt * GetBorrowingPercentage(borrowingPercentagePerYear);
         }
-        public static double GetBorrowingPercentagePerYear(double BorrowingPercentagePerYear)
+
+        public static double GetBorrowingPercentage(double borrowingPercentagePerYear)
         {
-            return BorrowingPercentagePerYear / 12 / 100;
+            return borrowingPercentagePerYear / 12 / 100;
         }
 
         public static double GetResidualDebt(double reducedDebt, double repayment)
@@ -27,9 +28,9 @@ namespace Interest
             return Math.Max(reducedDebt - repayment, 0);
         }
 
-        public static double GetReducedDebt(double initialDebt, double unscheduledRepayment)
+        public static double GetReducedDebt(double initialDebt, UnscheduledRepayment unscheduledRepayment)
         {
-            return initialDebt - unscheduledRepayment;
+            return initialDebt - unscheduledRepayment.Value;
         }
     }
 }

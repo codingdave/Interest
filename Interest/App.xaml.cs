@@ -21,6 +21,8 @@ namespace Interest
     {
         public App()
         {
+            var m = new MainWindow();
+            m.ShowDialog();
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -80,7 +82,8 @@ namespace Interest
 
         protected override Window CreateShell()
         {
-            return Container.Resolve<MainWindow>();
+            //return Container.Resolve<MainWindow>();
+            return null;
         }
     }
 

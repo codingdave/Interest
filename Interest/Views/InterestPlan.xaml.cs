@@ -18,14 +18,26 @@ using Prism.Mvvm;
 
 namespace Interest.Views
 {
-    /// <summary>
-    /// Interaktionslogik für Page1.xaml
-    /// </summary>
     public partial class InterestPlan : UserControl
     {
         public InterestPlan()
         {
             InitializeComponent();
+        }
+
+        public bool UnscheduledRepayment
+        {
+            get { return (bool)GetValue(UnscheduledRepaymentProperty); }
+            set { SetValue(UnscheduledRepaymentProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for UnscheduledRepayment.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty UnscheduledRepaymentProperty =
+            DependencyProperty.Register("UnscheduledRepayment", typeof(bool), typeof(InterestPlan), new PropertyMetadata(UnscheduledRepaymentChanged));
+
+        private static void UnscheduledRepaymentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

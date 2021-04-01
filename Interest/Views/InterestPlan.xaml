@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:prism="http://prismlibrary.com/"
-      prism:ViewModelLocator.AutoWireViewModel="True"
+      prism:ViewModelLocator.AutoWireViewModel="False"
       xmlns:vm="clr-namespace:Interest.ViewModels"
       xmlns:model="clr-namespace:Interest.Models"
       xmlns:view="clr-namespace:Interest.Views"
@@ -36,32 +36,37 @@
             <Setter Property="HorizontalAlignment" Value="Right" />
         </Style>
         <local:PercentageConverter x:Key="percentageConverter" />
+        <local:UnscheduledRepaymentConverter x:Key="unscheduledRepaymentConverter"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        
         <WrapPanel Grid.Row="0">
             <Label Content="Loan (€):" />
             <TextBox Text="{Binding LoanAmount, StringFormat=C2, ConverterCulture='de-DE'}"/>
             <Label Content="Borrowing (%):" />
-            <TextBox Text="{Binding BorrowingPercentage, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}"/>
+            <TextBox Text="{Binding BorrowingPercentagePerYear, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}"/>
             <Label Content="Monthly Payment/Redemption (€):" />
             <TextBox Text="{Binding RedemptionAmount, StringFormat=C2, ConverterCulture='de-DE'}"/>
             <Label Content="Redemption (%):" />
             <TextBox Text="{Binding RedemptionPercentage, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" />
             <Label Content="Years:" />
             <TextBox Text="{Binding Years}" />
+            <Label Content="Redemption free months:" />
+            <TextBox Text="{Binding RedemptionFreeMonths}" />
             <Label Content="Starting from:" />
             <TextBox Text="{Binding StartMonth, StringFormat=d, ConverterCulture='de-DE'}" />
             <Label Content="Unscheduled Repayment (%):" />
             <TextBox Text="{Binding UnscheduledRepaymentPercentage, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" />
             <CheckBox Content="optimize extra repayments:" IsChecked="{Binding IsApplyAllUnscheduledRepayments}" ToolTip="Will add the maximum unschedluded repayment every 12 months"/>
         </WrapPanel>
+        
         <DataGrid Grid.Row="1"
             ItemsSource="{Binding Payments}" 
             AutoGenerateColumns="False"
@@ -75,7 +80,22 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Month, StringFormat=d, ConverterCulture='de-DE'}" Header="Month" FontWeight="Light" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Path=Debt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Remaining Debt" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path=UnscheduledRepayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Unscheduled Repayment" />
+                <DataGridTextColumn Binding="{Binding Path=UnscheduledRepayment, StringFormat=C2, ConverterCulture='de-DE', Mode=TwoWay, Converter={StaticResource unscheduledRepaymentConverter}}" Header="Unscheduled Repayment">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding UnscheduledRepayment, Converter={StaticResource unscheduledRepaymentConverter}}" Value="False">
+                                    <!--<Setter Property="Background" Value="White"/>-->
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding UnscheduledRepayment, Converter={StaticResource unscheduledRepaymentConverter}}" Value="True">
+                                    <!--<Setter Property="Background" Value="#FFEFEFEF"/>-->
+                                    <Setter Property="FontWeight" Value="Heavy"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=ReducedDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Reduced Debt" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Path=MonthlyPayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Payment" />
                 <DataGridTextColumn Binding="{Binding Path=Interest, StringFormat=C2, ConverterCulture='de-DE'}" Header="Interest" IsReadOnly="True" />
@@ -93,15 +113,16 @@
                 </Style>
             </DataGrid.CellStyle>
         </DataGrid>
-        <StackPanel Grid.Row="2">
-            <Label Content="TotalInterest: "/>
-            <Label Content="{Binding TotalInterest}" />
-            <Label Content="Remaining Debt: " />
-            <Label Content="{Binding ResidualDebt}" />
-        </StackPanel>
-        <StackPanel Grid.Row="3">
-            <Button Content="Reset" Command="{Binding ResetCommand}"/>
-            <Button Content="Update" Command="{Binding UpdateCommand}"/>
-        </StackPanel>
+
+        <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="TotalInterest: "/>
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding TotalInterest}" />
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Remaining Debt: " />
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding ResidualDebt}" />
+        </WrapPanel>
+        
+        <WrapPanel Grid.Row="3" HorizontalAlignment="Center">
+            <Button Padding="5 0 5 0" Margin="10 10 10 10" Content="Calculate" Command="{Binding CalculateCommand}"/>
+        </WrapPanel>
     </Grid>
 </UserControl>
