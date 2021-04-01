@@ -1,4 +1,5 @@
-﻿using Interest.ViewModels;
+﻿using DependencyInjection.Example;
+using Interest.ViewModels;
 using Interest.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +10,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Interest
@@ -20,49 +22,81 @@ namespace Interest
     {
         public App()
         {
-            var c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var r = new ConfigurationManagerReaderWriter(c);
-            var w = new MainWindow();
-            w.DataContext = new MainWindowViewModel(r);
-            w.WindowState = WindowState.Maximized;
-            w.WindowStyle = WindowStyle.SingleBorderWindow;
-            w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            w.ShowDialog();
+            // IOC
+            // Configuration bind
+            // Load/Save Json
+            // Image size on startup
+            // save per tab
+            // unit tests
+            //var c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            //var r = new ConfigurationManagerReaderWriter(c);
+            //var w = new MainWindow();
+            //w.DataContext = new MainWindowViewModel(r);
+            //w.WindowState = WindowState.Maximized;
+            //w.WindowStyle = WindowStyle.SingleBorderWindow;
+            //w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            //w.ShowDialog();
+
+        //    var appConfig = new AppConfig()
+        //    {
+        //        //your appsettings.json props here
+        //    }
+        //    _appConfiguration.Bind(appConfig);
+        //    appConfig.IsFirstStart = "...";
+        //    string json = JsonConvert.SerializeObject(appConfig);
+        //    System.IO.File.WriteAllText("appsettings.json", json);
+        // BIND!!!
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             using IHost host = CreateHostBuilder(e.Args).Build();
+
+            //_ = host.Services.GetService<ExampleService>();
+            host.Run();
+            //return host.RunAsync();
         }
+
+        //static Task Main(string[] args) =>
+        //    CreateHostBuilder(args).Build().RunAsync();
 
         static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
-                {
-                    configurationBuilder.Sources.Clear();
+                .ConfigureServices((_, services) =>
+                    services.AddHostedService<Worker>()
+                            .AddScoped<IMessageWriter, LoggingMessageWriter>());
 
-                    IHostEnvironment env = hostingContext.HostingEnvironment;
+        //static IHostBuilder CreateHostBuilder(string[] args) =>
+        //    //        services.AddHostedService<Worker>()
+        //    //                .AddScoped<IMessageWriter, MessageWriter>());
 
-                    configurationBuilder
-                        .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                        .AddEnvironmentVariables(prefix: "CustomPrefix_")
-                    ;
+        //Host.CreateDefaultBuilder(args)
+        //        .ConfigureAppConfiguration((hostingContext, services) =>
+        //        {
+        //            services.Sources.Clear();
 
-                    IConfigurationRoot configurationRoot = configurationBuilder.Build();
+        //            IHostEnvironment env = hostingContext.HostingEnvironment;
 
-                    //TransientFaultHandlingOptions transientOptions = new();
-                    //configurationRoot.GetSection(nameof(TransientFaultHandlingOptions)).Bind(transientOptions);
-                    //System.Diagnostics.Debug.WriteLine($"TransientFaultHandlingOptions.Enabled={transientOptions.Enabled}");
-                    //System.Diagnostics.Debug.WriteLine($"TransientFaultHandlingOptions.AutoRetryDelay={transientOptions.AutoRetryDelay}");
+        //            services
+        //                .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: true)
+        //                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+        //                .AddEnvironmentVariables(prefix: "CustomPrefix_")
+        //            ;
 
-                    foreach ((string key, string value) in
-                        configurationRoot.AsEnumerable().Where(t => t.Value is not null))
-                    {
-                        System.Diagnostics.Debug.WriteLine($"{key}={value}");
-                    }
-                });
+        //            IConfigurationRoot configurationRoot = services.Build();
+
+        //            //TransientFaultHandlingOptions transientOptions = new();
+        //            //configurationRoot.GetSection(nameof(TransientFaultHandlingOptions)).Bind(transientOptions);
+        //            //System.Diagnostics.Debug.WriteLine($"TransientFaultHandlingOptions.Enabled={transientOptions.Enabled}");
+        //            //System.Diagnostics.Debug.WriteLine($"TransientFaultHandlingOptions.AutoRetryDelay={transientOptions.AutoRetryDelay}");
+
+        //            foreach ((string key, string value) in
+        //                configurationRoot.AsEnumerable().Where(t => t.Value is not null))
+        //            {
+        //                System.Diagnostics.Debug.WriteLine($"{key}={value}");
+        //            }
+        //        });
 
         //protected override void RegisterTypes(IContainerRegistry containerRegistry)
         //{

@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace Interest.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase, ICreateWindow
+    public class MainWindowViewModel : ViewModelBase, ICreateWindow, IMainWindowViewModel
     {
         public MainWindowViewModel(ConfigurationManagerReaderWriter reader)
         {
