@@ -91,8 +91,23 @@
             >
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Date, StringFormat=d, ConverterCulture='de-DE'}" Header="Date" FontWeight="Light" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Residual Debt" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path=UnscheduledRepayment, StringFormat=C2, ConverterCulture='de-DE', Mode=TwoWay, Converter={StaticResource InputValue}}" Header="Unscheduled Repayment">
+                <DataGridTextColumn Binding="{Binding Path=UnscheduledRepayment, StringFormat=C2, ConverterCulture='de-DE', Mode=TwoWay, Converter={StaticResource InputValue}}" Header="Extra">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <ContentControl Content="{Binding}">
+                                            <ToolTipService.ToolTip>
+                                                <ToolTip Content="Unscheduled Repayment" />
+                                            </ToolTipService.ToolTip>
+                                        </ContentControl>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                    
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
@@ -123,6 +138,7 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=Interest, StringFormat=C2, ConverterCulture='de-DE'}" Header="Interest" IsReadOnly="True" />
                 <DataGridTextColumn Binding="{Binding Path=Repayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Repayment" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Residual Debt" IsReadOnly="True"/>
             </DataGrid.Columns>
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
@@ -137,9 +153,9 @@
 
         <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Total Interest: "/>
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding TotalInterest, StringFormat=C2, ConverterCulture='de-DE'}" />
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding Path=TotalInterest, StringFormat=C2, ConverterCulture='de-DE'}" />
             <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="Residual Debt: " />
-            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" />
+            <Label Padding="5 0 5 0" Margin="10 10 10 10" Content="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" />
         </WrapPanel>
         
         <WrapPanel Grid.Row="3" HorizontalAlignment="Center">

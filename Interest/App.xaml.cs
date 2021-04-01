@@ -4,8 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Markup;
 
 namespace Interest
 {
@@ -16,6 +18,12 @@ namespace Interest
     {
         public App()
         {
+            // fix localization / Binding defaulting to german
+            // fix rescaling flickering
+            // do not show summary on mainwindow if only one loan is calculated
+            // remove command button
+            // add number of month
+            // better numbers for Total Interest and Residual Debt
             // calsses for percentage, currency, fraction?
             // MainWindow: Years, StartMonth
             // GridView: Show Index for month
@@ -28,6 +36,10 @@ namespace Interest
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            //// make binding use the correct language
+            //FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+
             using IHost host = CreateHostBuilder(e.Args).Build();
 
             var vm = host.Services.GetService<IMainWindowViewModel>();
