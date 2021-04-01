@@ -20,7 +20,6 @@ namespace Interest
         public App()
         {
             // validation
-            // Culture title
             // scheint so zu sein, dass die _redemptionPercentage und borrowingrate in der UI verwechselt sind
             // create options menu, place language there 
             // classes for percentage, currency, fraction?

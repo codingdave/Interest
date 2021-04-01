@@ -38,7 +38,8 @@
             <MenuItem Header="About" Command="{Binding CreateWindowCommand}" HorizontalAlignment="Right"/>
         </Menu>
         <WrapPanel Grid.Row="1" Margin="5 1 5 1" Orientation="Horizontal">
-            <ComboBox ItemsSource="{Binding Cultures}" SelectedItem="{Binding SelectedCulture}" Text="Culture"/>
+            <Label Content="Culture: "/>
+            <ComboBox ItemsSource="{Binding Cultures}" SelectedItem="{Binding SelectedCulture}"/>
         </WrapPanel>
 
         <TabControl Grid.Row="2" Margin="5 1 5 1" ItemsSource="{Binding InterestPlanViewModels}" 
