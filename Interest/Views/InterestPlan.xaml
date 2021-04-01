@@ -59,14 +59,14 @@
         <DataGrid ItemsSource="{Binding Payments}" Height="800" AutoGenerateColumns="False" CanUserAddRows="false">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Month, StringFormat=d, ConverterCulture='de-DE'}" Header="Month" FontWeight="Light" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path=MonthlyPayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Payment" />
                 <DataGridTextColumn Binding="{Binding Path=InitialDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Remaining Debt" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Path=UnscheduledRepayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Unscheduled Repayment" />
                 <DataGridTextColumn Binding="{Binding Path=ReducedDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Reduced Debt" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Path=MonthlyPayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Payment" />
                 <DataGridTextColumn Binding="{Binding Path=Interest, StringFormat=C2, ConverterCulture='de-DE'}" Header="Interest" IsReadOnly="True" />
                 <DataGridTextColumn Binding="{Binding Path=Repayment, StringFormat=C2, ConverterCulture='de-DE'}" Header="Repayment" IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Residual Debt" IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding Path=BorrowingRate, StringFormat=p2, ConverterCulture='de-DE'}" Header="Borrowing Rate" IsReadOnly="True" />
+                <!--<DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture='de-DE'}" Header="Residual Debt" IsReadOnly="True" />-->
+                <!--<DataGridTextColumn Binding="{Binding Path=BorrowingRate, StringFormat=p2, ConverterCulture='de-DE', Converter={StaticResource percentageConverter}}" Header="Borrowing Rate" IsReadOnly="True" />-->
             </DataGrid.Columns>
         </DataGrid>
 
