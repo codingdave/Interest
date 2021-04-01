@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Interest.Commands;
 
 namespace Interest.ViewModels
 {
@@ -23,6 +25,7 @@ namespace Interest.ViewModels
             _author = "David-Tillmann Schaefer";
             _email = "codingdave@gmail.com";
             _description = $"The {_productName} helps understanding costs for interests and helps in creating payment plans";
+            _url = "https://github.com/codingdave/Interest";
         }
 
         #region AboutText
@@ -95,11 +98,22 @@ namespace Interest.ViewModels
         }
         #endregion
 
-        #region AuthorInfo
+        #region URL
+        private string _url;
+
+        public string URL { get => _url; set => SetProperty(ref _url, value); }
+        #endregion 
         public string AuthorInfo
         {
             get { return $"{_author}, {_email}"; }
         }
-        #endregion
+
+        private ICommand openBrowserCommand;
+        public ICommand OpenBrowserCommand => openBrowserCommand ??= new DelegateCommand(OpenBrowser);
+
+        private void OpenBrowser()
+        {
+            Process.Start(new ProcessStartInfo(URL) { UseShellExecute = true });
+        }
     }
 }

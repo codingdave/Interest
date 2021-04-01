@@ -14,18 +14,51 @@
     <Window.DataContext>
         <vm:AboutViewModel/>
     </Window.DataContext>
-    
-    <StackPanel>
-        <TextBlock Margin="10,5,10,5" HorizontalAlignment="Left" FontSize="16" Text="{Binding Description}"/>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Margin="10,5,10,5" HorizontalAlignment="Left" FontSize="14" Text="{Binding ProductName}"/>
-            <TextBlock Margin="10,5,10,5" HorizontalAlignment="Left" FontSize="14" Text="{Binding Version}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Margin="10,5,10,5" HorizontalAlignment="Left" FontSize="14" Text="{Binding Author}"/>
-            <TextBlock Margin="10,5,10,5" HorizontalAlignment="Left" FontSize="14" Text="{Binding Email}"/>
-        </StackPanel>
-        <TextBlock HorizontalAlignment="Right" Margin="10,5,10,5"  FontSize="12" Text="{Binding Copyright}"/>
-    </StackPanel>
-        
+
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="Margin" Value="10,5,10,5"/>
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center" FontSize="16" Text="{Binding Description}"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Text="{Binding ProductName}"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"  Text="{Binding Version}"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Text="Project Site" />
+        <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"> 
+            <Hyperlink NavigateUri="{Binding URL}" Command="{Binding OpenBrowserCommand}">
+                <!--<Run Text="{Binding URL}"/>-->
+                <!--<Hyperlink.Inlines>-->
+                    <Run Text="{Binding Path=URL}"/>
+                <!--</Hyperlink.Inlines>-->
+            </Hyperlink>
+            <!--
+                <Interactions:Interaction.Behaviors>
+                    <behaviours:HyperlinkOpenBehaviour ConfirmNavigation="True"/>
+                </Interactions:Interaction.Behaviors>
+                <Hyperlink.Inlines>
+                    <Run Text="{Binding Path=Link}"/>
+                </Hyperlink.Inlines>
+            -->
+        </TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Text="Author" />
+        <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"  Text="{Binding Author}"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Text="Email" />
+        <TextBlock Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left"  Text="{Binding Email}"/>
+        <TextBlock Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right" FontSize="12" Text="{Binding Copyright}"/>
+    </Grid>
+
 </Window>
