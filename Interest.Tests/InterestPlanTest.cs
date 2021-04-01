@@ -10,7 +10,7 @@ namespace Interest.Tests
         [Fact]
         public void Properties()
         {
-            var plan = new InterestPlanViewModel(InterestPlanViewModelOptions.GetDefault());
+            var plan = new InterestPlanViewModel(InterestPlanViewModelOption.GetExample1());
 
             var starMonth = DateTime.Now;
             var loanAmount = 100.0;
@@ -38,7 +38,7 @@ namespace Interest.Tests
         [Fact]
         public void UpdateKeepsProperties()
         {
-            var plan = new InterestPlanViewModel(InterestPlanViewModelOptions.GetDefault());
+            var plan = new InterestPlanViewModel(InterestPlanViewModelOption.GetExample1());
 
             var starMonth = DateTime.Now;
             var loanAmount = 100.0;
@@ -57,7 +57,7 @@ namespace Interest.Tests
             plan.UnscheduledRepaymentPercentage = unscheduledRepaymentPercentage;
 
             // TODO: Do something or remove that
-            var result = plan.Calculate();
+            var result = plan.Calculate(plan.Payments);
 
             Assert.Equal(years, plan.Years);
             Assert.Equal(starMonth, plan.StartMonth);
@@ -71,7 +71,7 @@ namespace Interest.Tests
         [Fact]
         public void InitializeKeepsProperties()
         {
-            var plan = new InterestPlanViewModel(InterestPlanViewModelOptions.GetDefault());
+            var plan = new InterestPlanViewModel(InterestPlanViewModelOption.GetExample1());
 
             var starMonth = DateTime.Now;
             var loanAmount = 100.0;
@@ -89,7 +89,7 @@ namespace Interest.Tests
             plan.UnscheduledRepaymentPercentage = unscheduledRepaymentPercentage;
 
             // TODO: Do something or remove that
-            var result = plan.Calculate();
+            var result = plan.Calculate(plan.Payments);
 
             Assert.Equal(years, plan.Years);
             Assert.Equal(starMonth, plan.StartMonth);

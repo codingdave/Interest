@@ -18,14 +18,9 @@ namespace Interest
     {
         public App()
         {
-            // System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.TabControl', AncestorLevel='1''. BindingExpression:Path=TabStripPlacement; DataItem=null; target element is 'TabItem' (Name=''); target property is 'NoTarget' (type 'Object')
-            // load data on startup / save on exit
             // fix localization / Binding defaulting to german
-            // do not show summary on mainwindow if only one loan is calculated
-            // remove command button
-            // add number of month
             // better numbers for Total Interest and Residual Debt
-            // calsses for percentage, currency, fraction?
+            // classes for percentage, currency, fraction?
             // MainWindow: Years, StartMonth
             // GridView: Show Index for month
             // Splash image, size, position

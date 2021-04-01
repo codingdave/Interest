@@ -17,7 +17,7 @@ namespace Interest.ViewModels
             var options = configuration.Get<Rootobject>() ?? new Rootobject();
             if (options.InterestPlanViewModelOptions.Count == 0)
             {
-                options.InterestPlanViewModelOptions.Add(InterestPlanViewModelOptions.GetDefault());
+                options.InterestPlanViewModelOptions.Add(InterestPlanViewModelOption.GetExample1());
             }
 
             InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>(options.InterestPlanViewModelOptions.Select(ip => new InterestPlanViewModel(ip)));
@@ -27,7 +27,7 @@ namespace Interest.ViewModels
 
             AddInterestPlanCommand = new DelegateCommand(() =>
             {
-                var p = new InterestPlanViewModel(InterestPlanViewModelOptions.GetDefault());
+                var p = new InterestPlanViewModel(InterestPlanViewModelOption.GetExample1());
                 InterestPlanViewModels.Add(p);
                 SelectedInterestPlanViewModelIndex = InterestPlanViewModels.IndexOf(p);
             });
@@ -67,6 +67,11 @@ namespace Interest.ViewModels
         public int SelectedInterestPlanViewModelIndex { get => _selectedInterestPlanViewModelIndex; set => SetProperty(ref _selectedInterestPlanViewModelIndex, value); }
 
         public void OnClose()
+        {
+            SaveAppsettings();
+        }
+
+        private void SaveAppsettings()
         {
             var options = new Rootobject();
             foreach (var m in InterestPlanViewModels)

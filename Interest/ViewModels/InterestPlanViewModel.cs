@@ -9,11 +9,11 @@ namespace Interest.ViewModels
 {
     public class InterestPlanViewModel : ViewModelBase
     {
-        internal InterestPlanViewModelOptions Values { get; }
+        internal InterestPlanViewModelOption Values { get; }
 
-        public InterestPlanViewModel(InterestPlanViewModelOptions values)
+        public InterestPlanViewModel(InterestPlanViewModelOption values)
         {
-            Values = values;
+            Values = values ?? throw new ArgumentNullException(nameof(values));
             Payments = new ObservableCollection<PaymentViewModel>();
 
             CalculateCommand = new DelegateCommand(() =>

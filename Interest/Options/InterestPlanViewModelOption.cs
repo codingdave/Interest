@@ -1,53 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Interest.Options
 {
 
-    public class Rootobject
+    public class InterestPlanViewModelOption
     {
-        public List<InterestPlanViewModelOptions> InterestPlanViewModelOptions { get; set; } = new List<InterestPlanViewModelOptions>();
-        public Logging Logging { get; set; } = new Logging();
-    }
-
-    public class Logging
-    {
-        public Dictionary<string, string> Loglevel { get; set; } = new Dictionary<string, string>();
-    }
-
-    public class InterestPlanViewModelOptions
-    {
-        public const string InterestPlan = "InterestPlan";
-
-        private InterestPlanViewModelOptions()
+        public static InterestPlanViewModelOption GetExample1()
         {
-        }
-
-        public static InterestPlanViewModelOptions GetDefault()
-        {
-            return new InterestPlanViewModelOptions
+            return new InterestPlanViewModelOption
             {
                 BorrowingPercentagePerYear = .77,
                 LoanAmount = 100000,
                 RedemptionFreeMonths = 12,
                 RedemptionPercentage = 2.5,
                 StartMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1),
-                Lender = "Full Repayment with redemption free months",
+                Lender = "Example 1",
                 UnscheduledRepaymentPercentage = 5,
                 Years = 20
             };
         }
 
-        public static InterestPlanViewModelOptions GetDefault2()
+        public static InterestPlanViewModelOption GetExample2()
         {
-            return new InterestPlanViewModelOptions
+            return new InterestPlanViewModelOption
             {
                 BorrowingPercentagePerYear = .99,
                 LoanAmount = 250000,
                 RedemptionFreeMonths = 0,
                 RedemptionPercentage = 2.5,
                 StartMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1),
-                Lender = "Unknown Lender",
+                Lender = "Example 2",
                 UnscheduledRepaymentPercentage = 5,
                 Years = 15
             };
