@@ -5,7 +5,7 @@ namespace Interest.ViewModels
 {
     public class ViewModelBase : INotifyPropertyChanged
     {
-        public bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string propertyName = null)
+        protected virtual bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string propertyName = null)
         {
             var ret = false;
             if (!ReferenceEquals(backingField, value))

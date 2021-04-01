@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:sys="clr-namespace:System;assembly=System.Core"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
         xmlns:vm="clr-namespace:Interest.ViewModels"
         xmlns:view="clr-namespace:Interest.Views"
         xmlns:converters="clr-namespace:Interest.Converters"
@@ -18,8 +18,10 @@
         ResizeMode="CanResizeWithGrip"
         Title="InterestCalculator"
         >
+    
     <Window.Resources>
         <converters:CountToVisibilityConverter x:Key="countToVisibilityConverter" />
+        <converters:BindingDebugConverter x:Key="debug" />
         <DataTemplate DataType="{x:Type vm:InterestPlanViewModel}">
             <view:InterestPlan/>
         </DataTemplate>
@@ -40,13 +42,14 @@
             <MenuItem Header="Delete" Command="{Binding DeleteInterestPlanCommand}" HorizontalAlignment="Right"/>
             <MenuItem Header="About" Command="{Binding CreateWindowCommand}" HorizontalAlignment="Right"/>
         </Menu>
+        
         <WrapPanel Grid.Row="1" Margin="5 1 5 1" Orientation="Horizontal">
             <Label Content="Culture: "/>
             <ComboBox ItemsSource="{Binding Cultures}" SelectedItem="{Binding SelectedCulture}"/>
         </WrapPanel>
 
         <TabControl Grid.Row="2" Margin="5 1 5 1" ItemsSource="{Binding InterestPlanViewModels}" 
-                    SelectedIndex="{Binding SelectedInterestPlanViewModelIndex}"
+            SelectedIndex="{Binding SelectedInterestPlanViewModelIndex}"
             Visibility="{Binding InterestPlanViewModels.Count, Converter={StaticResource countToVisibilityConverter}, ConverterParameter={StaticResource Int0}}">
             <TabControl.ItemTemplate>
                 <DataTemplate>

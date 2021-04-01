@@ -19,8 +19,8 @@ namespace Interest.Converters
             {
                 s = s.Slice(0, s.Length - 1);
             }
-            double.TryParse(s.ToString(), out var res);
-            return res;
+            var success = double.TryParse(s.ToString(), out var res);
+            return success ? res : value;
         }
     }
 }

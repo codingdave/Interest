@@ -36,7 +36,6 @@
             <Setter Property="HorizontalAlignment" Value="Right" />
         </Style>
         <converters:PercentageConverter x:Key="percentageConverter" />
-        <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter" />
         <converters:BooleanInversionConverter x:Key="booleanInversionConverter" />
         <converters:InputValueConverter x:Key="InputValue"/>
     </UserControl.Resources>
@@ -55,10 +54,6 @@
             <Label Content="Starting from:" />
             <TextBox Text="{Binding StartMonth, StringFormat=d, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" />
             <Label Content="Loan:" />
-            <!--<TextBlock Text="{Binding Date, 
-            Converter={x:Static my:StringFormatConverter.Instance}, 
-            ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}, 
-            ConverterParameter={}{0:d}}" />-->
             <TextBox Text="{Binding LoanAmount, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}"/>
             <Label Content="Borrowing:" />
             <TextBox Text="{Binding BorrowingPercentagePerYear, StringFormat=p2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, Converter={StaticResource percentageConverter}}"/>
@@ -126,7 +121,7 @@
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=ReducedDebt, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" Header="Reduced Debt" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path=Payment, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, Converter={StaticResource InputValue}}" Header="Payment">
+                <DataGridTextColumn Binding="{Binding Path=Payment, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, Converter={StaticResource InputValue}, UpdateSourceTrigger=LostFocus}" Header="Payment">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>

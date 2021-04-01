@@ -15,12 +15,11 @@ namespace Interest.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            InputValue<double> ret = default;
+            object ret = value;
             if (double.TryParse((string)value, out var val))
             {
                 ret = new InputValue<double>(val, InputType.Manual);
             }
-
             return ret;
         }
     }
