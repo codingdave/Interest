@@ -58,7 +58,7 @@ jobs:
     env:
       Solution_Name: Interest.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
       Application_Project_Path: Interest\Interest.csproj 
-      Application_Publish_Path: Interest\bin\${{ env.Configuration }}\net5.0-windows\publish
+      Application_Publish_Path: Interest\bin\$env:Configuration\net5.0-windows\publish
       Test_Project_Path: Interest.Tests\Interest.Tests.csproj                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
       # Wap_Project_Directory: Interest\Interest.csproj    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
       # Wap_Project_Path: your-wap-project-path                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
