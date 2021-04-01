@@ -20,7 +20,7 @@ jobs:
     env:
       Solution_Name: Interest.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
       Application_Project_Path: Interest\Interest.csproj 
-      Application_Publish_Path: Interest\bin\${{ env.Configuration }}\net5.0-windows\publish
+      Application_Publish_Path: Interest\bin\${{ matrix.configuration }}\net5.0-windows\publish
       Test_Project_Path: Interest.Tests\Interest.Tests.csproj                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
 
     steps:
