@@ -45,7 +45,7 @@ namespace Interest.Tests
             var borrowingPercentagePerYear = 0.001;
             var monthlyPayment = 50.0;
             var years = 15;
-            var unscheduledRepaymentPercentage = .05; 
+            var unscheduledRepaymentPercentage = .05;
             var redemptionPercentage = Calculator.GetRedemptionPercentage(loanAmount, borrowingPercentagePerYear, monthlyPayment);
 
 
@@ -56,7 +56,8 @@ namespace Interest.Tests
             plan.Years = years;
             plan.UnscheduledRepaymentPercentage = unscheduledRepaymentPercentage;
 
-            plan.Calculate();
+            // TODO: Do something or remove that
+            var result = plan.Calculate();
 
             Assert.Equal(years, plan.Years);
             Assert.Equal(starMonth, plan.StartMonth);
@@ -87,7 +88,8 @@ namespace Interest.Tests
             plan.Years = years;
             plan.UnscheduledRepaymentPercentage = unscheduledRepaymentPercentage;
 
-            plan.Calculate();
+            // TODO: Do something or remove that
+            var result = plan.Calculate();
 
             Assert.Equal(years, plan.Years);
             Assert.Equal(starMonth, plan.StartMonth);

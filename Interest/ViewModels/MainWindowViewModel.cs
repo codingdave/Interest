@@ -2,7 +2,6 @@
 using Interest.Options;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -11,21 +10,8 @@ using System.Windows.Input;
 
 namespace Interest.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, ICreateWindow, IOnClose
+    public class MainWindowViewModel : ViewModelBase, ICreateWindow, IOnClose
     {
-        public MainWindowViewModel()
-        {
-            if (!System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
-            {
-                throw new InvalidOperationException("Design time only");
-            }
-
-            var interestPlanViewModelOptions = new List<InterestPlanViewModelOptions>();
-            interestPlanViewModelOptions.Add(InterestPlanViewModelOptions.GetDefault());
-            interestPlanViewModelOptions.Add(InterestPlanViewModelOptions.GetDefault2());
-            InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>(interestPlanViewModelOptions.Select(ip => new InterestPlanViewModel(ip)));
-        }
-
         public MainWindowViewModel(IConfiguration configuration)
         {
             var options = configuration.Get<Rootobject>() ?? new Rootobject();

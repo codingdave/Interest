@@ -18,6 +18,8 @@ namespace Interest
     {
         public App()
         {
+            // System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.TabControl', AncestorLevel='1''. BindingExpression:Path=TabStripPlacement; DataItem=null; target element is 'TabItem' (Name=''); target property is 'NoTarget' (type 'Object')
+            // load data on startup / save on exit
             // fix localization / Binding defaulting to german
             // do not show summary on mainwindow if only one loan is calculated
             // remove command button
@@ -41,7 +43,7 @@ namespace Interest
 
             using IHost host = CreateHostBuilder(e.Args).Build();
 
-            var vm = host.Services.GetService<IMainWindowViewModel>();
+            var vm = host.Services.GetService<MainWindowViewModel>();
             var mw = host.Services.GetService<MainWindow>();
             mw.DataContext = vm;
             mw.ShowDialog();
@@ -81,7 +83,7 @@ namespace Interest
                 .ConfigureServices((hostBuilderContext, serviceCollection) =>
                 {
                     serviceCollection
-                        .AddTransient<IMainWindowViewModel, MainWindowViewModel>()
+                        .AddTransient<MainWindowViewModel>()
                         .AddTransient<MainWindow>()
                         ;
                     //serviceCollection
