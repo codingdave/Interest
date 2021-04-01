@@ -89,7 +89,7 @@ namespace Interest.ViewModels
             Payments = ret;
         }
 
-        private double GetRequiredAmount(double maximumAmount, double currentDebt)
+        private static double GetRequiredAmount(double maximumAmount, double currentDebt)
         {
             var c = currentDebt;
             var nextRate = maximumAmount/* + (maximumAmount * BorrowingPercentage / 12)*/;
