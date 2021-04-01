@@ -45,7 +45,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
+
         <WrapPanel Grid.Row="0">
             <Label Content="Loan (€):" />
             <TextBox Text="{Binding LoanAmount, StringFormat=C2, ConverterCulture='de-DE'}"/>
@@ -113,11 +113,9 @@
             </DataGrid.Columns>
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
-                    <!--<Setter Property="Background" Value="#FFF7F7F7"/>-->
                     <Style.Triggers>
                         <Trigger Property="IsReadOnly" Value="True">
                             <Setter Property="FontWeight" Value="Light"/>
-                            <!--<Setter Property="Background" Value="#FFFEF6F6"/>-->
                         </Trigger>
                     </Style.Triggers>
                 </Style>

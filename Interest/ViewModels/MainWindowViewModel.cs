@@ -59,12 +59,22 @@ namespace Interest.ViewModels
         public ObservableCollection<InterestPlanViewModel> InterestPlanViewModels
         {
             get => _interestPlanViewModels;
-            set => _ = SetProperty(ref _interestPlanViewModels, value);
+            set
+            {
+                if (SetProperty(ref _interestPlanViewModels, value))
+                {
+                    SelectedInterestPlanViewModel = value[0];
+                }
+            }
         }
         #endregion
 
         public ICommand AddInterestPlanCommand { get; set; }
         public DelegateCommand ResetAllCommand { get; }
         public DelegateCommand CalculateAllCommand { get; }
+
+        private InterestPlanViewModel _selectedInterestPlanViewModel;
+
+        public InterestPlanViewModel SelectedInterestPlanViewModel { get => _selectedInterestPlanViewModel; set => SetProperty(ref _selectedInterestPlanViewModel, value); }
     }
 }
