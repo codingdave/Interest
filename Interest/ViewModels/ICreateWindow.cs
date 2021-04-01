@@ -4,6 +4,6 @@ namespace Interest.ViewModels
 {
     public interface ICreateWindow
     {
-        public Action OnLoaded { get; set; }
+        public Action CreateWindow { get; set; }
     }
 }

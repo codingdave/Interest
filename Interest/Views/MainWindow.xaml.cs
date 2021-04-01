@@ -30,7 +30,7 @@ namespace Interest.Views
         {
             if (DataContext is ICreateWindow icw)
             {
-                icw.OnLoaded = () =>
+                icw.CreateWindow = () =>
                 {
                     var v = new About();
                     v.ShowDialog();

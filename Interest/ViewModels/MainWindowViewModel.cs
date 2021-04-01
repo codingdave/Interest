@@ -36,7 +36,7 @@ namespace Interest.ViewModels
 
             InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>(options.InterestPlanViewModelOptions.Select(ip => new InterestPlanViewModel(ip)));
 
-            CreateWindowCommand = new DelegateCommand(() => OnLoaded?.Invoke());
+            CreateWindowCommand = new DelegateCommand(() => CreateWindow?.Invoke());
             AddInterestPlanCommand = new DelegateCommand(() =>
             {
                 var p = new InterestPlanViewModel(InterestPlanViewModelOptions.GetDefault());
@@ -62,7 +62,7 @@ namespace Interest.ViewModels
         public double ResidualDebt => InterestPlanViewModels.Select(a => a.ResidualDebt).Aggregate((a, b) => a + b);
 
         public ICommand CreateWindowCommand { get; private set; }
-        public Action OnLoaded { get; set; }
+        public Action CreateWindow { get; set; }
 
         #region InterestPlanViewModels
         private ObservableCollection<InterestPlanViewModel> _interestPlanViewModels;
