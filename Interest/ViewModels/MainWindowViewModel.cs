@@ -20,10 +20,10 @@ namespace Interest.ViewModels
                 throw new InvalidOperationException("Design time only");
             }
 
-            var options = new List<InterestPlanViewModelOptions>();
-            options.Add(InterestPlanViewModelOptions.GetDefault());
-            options.Add(InterestPlanViewModelOptions.GetDefault());
-            InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>(options.Select(ip => new InterestPlanViewModel(ip)));
+            var interestPlanViewModelOptions = new List<InterestPlanViewModelOptions>();
+            interestPlanViewModelOptions.Add(InterestPlanViewModelOptions.GetDefault());
+            interestPlanViewModelOptions.Add(InterestPlanViewModelOptions.GetDefault2());
+            InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>(interestPlanViewModelOptions.Select(ip => new InterestPlanViewModel(ip)));
         }
 
         public MainWindowViewModel(IConfiguration configuration)
