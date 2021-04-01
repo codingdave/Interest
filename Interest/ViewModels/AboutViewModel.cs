@@ -20,7 +20,7 @@ namespace Interest.ViewModels
             _aboutText = $"About";
             _version = $"Version {productVersion}";
             _copyright = "All rights reserved";
-            _author = "David Schaefer";
+            _author = "David-Tillmann Schaefer";
             _email = "codingdave@gmail.com";
             _description = $"The {_productName} helps understanding costs for interests and helps in creating payment plans";
         }
