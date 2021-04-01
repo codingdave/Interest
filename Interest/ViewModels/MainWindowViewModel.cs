@@ -35,6 +35,7 @@ namespace Interest.ViewModels
             }
 
             InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>(options.InterestPlanViewModelOptions.Select(ip => new InterestPlanViewModel(ip)));
+            InterestPlanViewModels.CollectionChanged += InterestPlanViewModels_CollectionChanged;
 
             CreateWindowCommand = new DelegateCommand(() => CreateWindow?.Invoke());
             AddInterestPlanCommand = new DelegateCommand(() =>
@@ -47,17 +48,17 @@ namespace Interest.ViewModels
 
             ResetAllCommand = new DelegateCommand(() => InterestPlanViewModels.ToList().ForEach(ip => ip.ResetCommand.Execute()));
 
-            CalculateAllCommand = new DelegateCommand(() =>
-            {
-                InterestPlanViewModels.ToList().ForEach(ip => ip.CalculateCommand.Execute());
-                RaisePropertyChanged(nameof(TotalInterest));
-                RaisePropertyChanged(nameof(ResidualDebt));
-            });
+            CalculateAllCommand = new DelegateCommand(() => InterestPlanViewModels.ToList().ForEach(ip => ip.CalculateCommand.Execute()));
 
             ResetAllCommand.Execute();
         }
 
-        public double TotalInterest => InterestPlanViewModels.Select(a => a.TotalInterest).Aggregate((a, b) => a + b);
+        private void InterestPlanViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(InterestPlanViewModels));
+            RaisePropertyChanged(nameof(TotalInterest));
+            RaisePropertyChanged(nameof(ResidualDebt));
+        }
 
         public double TotalInterest => InterestPlanViewModels.Count == 0 ? 0 : InterestPlanViewModels.Select(a => a.TotalInterest).Aggregate((a, b) => a + b);
 
