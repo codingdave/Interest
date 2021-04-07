@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -51,9 +52,8 @@ namespace Interest
 
             try
             {
-                var vm = host.Services.GetService<MainWindowViewModel>();
+                host.Start();
                 var mw = host.Services.GetService<MainWindow>();
-                mw.DataContext = vm;
                 mw.ShowDialog();
             }
             catch (Exception ex)
@@ -63,11 +63,41 @@ namespace Interest
                 System.IO.File.Delete("appsettings.json");
             }
 
+            LoggerConfiguration loggerConfiguration = new LoggerConfiguration();
+            var foo = loggerConfiguration.CreateLogger();
+
+
             Current.Shutdown();
         }
 
         static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseSerilog((host, loggerConfiguration) =>
+                {
+                    loggerConfiguration.WriteTo.File("app.log", rollingInterval: RollingInterval.Day)
+                        .WriteTo.Debug();
+                })
+                .ConfigureLogging((hostBuilderContext, loggingBuilder) =>
+                {
+                    loggingBuilder
+                        .SetMinimumLevel(LogLevel.Trace)
+                        .AddConfiguration(hostBuilderContext.Configuration.GetSection("Logging"))
+                        .AddSimpleConsole(options =>
+                        {
+                            options.IncludeScopes = true;
+                            options.SingleLine = true;
+                            //options.TimestampFormat = "hh:mm:ss ";
+                            options.UseUtcTimestamp = true;
+                        })
+                        .AddEventLog()
+                        .AddConsole()
+                        .AddDebug()
+                        .AddFileLogger(options =>
+                        {
+                            hostBuilderContext.Configuration.GetSection("Logging").GetSection("FileLogger").GetSection("Options").Bind(options);
+                        });
+                    ;
+                })
                 .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
                 {
                     IHostEnvironment env = hostBuilderContext.HostingEnvironment;
@@ -82,33 +112,15 @@ namespace Interest
                         System.Diagnostics.Debug.WriteLine($"{key}={value}");
                     }
                 })
-                .ConfigureLogging((hostBuilderContext, loggingBuilder) =>
-                {
-                    loggingBuilder
-                        .SetMinimumLevel(LogLevel.Trace)
-                        .AddConfiguration(hostBuilderContext.Configuration.GetSection("Logging"))
-                        .AddSimpleConsole(options =>
-                        {
-                            options.IncludeScopes = true;
-                            options.SingleLine = true;
-                                //options.TimestampFormat = "hh:mm:ss ";
-                                options.UseUtcTimestamp = true;
-                        })
-                        .AddEventLog()
-                        .AddConsole()
-                        .AddDebug()
-                        .AddFileLogger(options =>
-                        {
-                            hostBuilderContext.Configuration.GetSection("Logging").GetSection("FileLogger").GetSection("Options").Bind(options);
-                        });
-                    ;
-                })
                 .ConfigureServices((hostBuilderContext, serviceCollection) =>
                 {
                     serviceCollection
                         .AddSingleton<MainWindowViewModel>()
-                        .AddSingleton<MainWindow>()
-                        ;
+                        .AddSingleton(s => new MainWindow()
+                        {
+                            DataContext = s.GetRequiredService<MainWindowViewModel>()
+                        });
+                    ;
                     //serviceCollection
                     //.AddTransient<ITransientOperation, TransientOperation>()
                     //.AddScoped<IScopedOperation, ScopedOperation>()
