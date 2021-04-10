@@ -12,6 +12,6 @@ namespace Interest.ViewModels
             InterestPlanViewModels.Add(new InterestPlanViewModel(InterestPlanViewModelOption.GetExample1()));
             InterestPlanViewModels.Add(new InterestPlanViewModel(InterestPlanViewModelOption.GetExample2()));
             Cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
-        }
+        }       
     }
 }

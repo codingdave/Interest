@@ -62,8 +62,8 @@
             Visibility="{Binding InterestPlanViewModels.Count, Converter={StaticResource countToVisibilityConverter}, ConverterParameter={StaticResource Int1}}">
             <StackPanel>
                 <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Padding="5 0 5 0" Margin="10 10 10 10" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=TotalInterest, StringFormat=Total Interest: {0:C}, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}"/>
-                    <TextBlock Padding="5 0 5 0" Margin="10 10 10 10" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=ResidualDebt, StringFormat=Total Residual Debt: {0:C}, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}"/>
+                    <TextBlock Padding="5 0 5 0" Margin="10 10 10 10" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=OverallTotalInterest, StringFormat=Total Interest: {0:C}, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}"/>
+                    <TextBlock Padding="5 0 5 0" Margin="10 10 10 10" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=OverallResidualDebt, StringFormat=Total Residual Debt: {0:C}, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}"/>
                 </WrapPanel>
 
                 <WrapPanel HorizontalAlignment="Center">

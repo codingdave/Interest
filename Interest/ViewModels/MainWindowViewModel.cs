@@ -18,8 +18,9 @@ namespace Interest.ViewModels
             var options = configuration.Get<Rootobject>() ?? new Rootobject();
             InitiateOptions(options);
 
-            InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>(options.InterestPlanViewModelOptions.Select(ip => new InterestPlanViewModel(ip)));
+            InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>();
             InterestPlanViewModels.CollectionChanged += InterestPlanViewModels_CollectionChanged;
+            options.InterestPlanViewModelOptions.ForEach(ip => AddInterestPlanViewModel(new InterestPlanViewModel(ip)));
             SelectedCulture = CultureInfo.GetCultureInfo(options.CultureInfo);
             Cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
 
@@ -28,12 +29,17 @@ namespace Interest.ViewModels
             AddInterestPlanCommand = new DelegateCommand(() =>
             {
                 var p = new InterestPlanViewModel(InterestPlanViewModelOption.GetExample1());
-                InterestPlanViewModels.Add(p);
+                AddInterestPlanViewModel(p);
                 SelectedInterestPlanViewModelIndex = InterestPlanViewModels.IndexOf(p);
             });
 
             DeleteInterestPlanCommand = new DelegateCommand(
-                () => InterestPlanViewModels.Remove(InterestPlanViewModels.ElementAt(SelectedInterestPlanViewModelIndex)),
+                () =>
+                {
+                    var interestPlanViewModel = InterestPlanViewModels.ElementAt(SelectedInterestPlanViewModelIndex);
+                    interestPlanViewModel.PropertyChanged -= InterestPlanViewModel_PropertyChanged;
+                    InterestPlanViewModels.Remove(interestPlanViewModel);
+                },
                 () => InterestPlanViewModels.Count > 1
                 );
 
@@ -42,6 +48,42 @@ namespace Interest.ViewModels
             CalculateAllCommand = new DelegateCommand(() => InterestPlanViewModels.ToList().ForEach(ip => ip.CalculateCommand.Execute()));
 
             ResetAllCommand.Execute();
+        }
+
+        private void InterestPlanViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateOverallTotalInterest();
+            UpdateOverallResidualDebt();
+        }
+
+        private void AddInterestPlanViewModel(InterestPlanViewModel interestPlanViewModel)
+        {
+            interestPlanViewModel.PropertyChanged += InterestPlanViewModel_PropertyChanged;
+            InterestPlanViewModels.Add(interestPlanViewModel);
+        }
+
+        private void UpdateOverallResidualDebt()
+        {
+            OverallResidualDebt = InterestPlanViewModels.Count == 0 ? 0 : InterestPlanViewModels.Select(a => a.ResidualDebt).Aggregate((a, b) => a + b);
+        }
+
+        private void UpdateOverallTotalInterest()
+        {
+            OverallTotalInterest = InterestPlanViewModels.Count == 0 ? 0 : InterestPlanViewModels.Select(a => a.TotalInterest).Aggregate((a, b) => a + b);
+        }
+
+        private void InterestPlanViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(InterestPlanViewModel.TotalInterest):
+                    UpdateOverallTotalInterest();
+                    break;
+
+                case nameof(InterestPlanViewModel.ResidualDebt):
+                    UpdateOverallResidualDebt();
+                    break;
+            }
         }
 
         private static void InitiateOptions(Rootobject options)
@@ -56,15 +98,15 @@ namespace Interest.ViewModels
             }
         }
 
-        private void InterestPlanViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged(nameof(TotalInterest));
-            RaisePropertyChanged(nameof(ResidualDebt));
-        }
+        #region OverallTotalInterest
+        private double _overallTotalInterest;
+        public double OverallTotalInterest { get => _overallTotalInterest; set => SetProperty(ref _overallTotalInterest, value); }
+        #endregion
 
-        public double TotalInterest => InterestPlanViewModels.Count == 0 ? 0 : InterestPlanViewModels.Select(a => a.TotalInterest).Aggregate((a, b) => a + b);
-
-        public double ResidualDebt => InterestPlanViewModels.Count == 0 ? 0 : InterestPlanViewModels.Select(a => a.ResidualDebt).Aggregate((a, b) => a + b);
+        #region OverallResidualDebt
+        private double _overallResidualDebt;
+        public double OverallResidualDebt { get => _overallResidualDebt; set => SetProperty(ref _overallResidualDebt, value); }
+        #endregion
 
         public CultureInfo SelectedCulture
         {
