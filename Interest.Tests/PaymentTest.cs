@@ -1,4 +1,5 @@
 using Interest.Models;
+using Interest.Types;
 using System;
 using Xunit;
 
@@ -12,14 +13,16 @@ namespace Interest.Tests
         [InlineData(1000.0, 10000.0, 0.01, 0.0)]
         [InlineData(10000.0, 10000.0, 0.05, 0)]
         [InlineData(10000.0, 10000.0, 0.001, 0)]
-        public void GetProperties(double monthlyPayment, double initialDebt, double borrowingPercentagePerYear, double unscheduledRepaymentValue)
+        public void GetProperties(double monthlyPayment, double initialDebt, double borrowing, double unscheduledRepaymentValue)
         {
             var date = new DateTime(2020, 04, 01);
-            var unscheduledRepayment = new InputValue<double>(unscheduledRepaymentValue, InputType.Auto);
-            var reducedDebt = Calculator.GetReducedDebt(initialDebt, unscheduledRepayment);
-            var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowingPercentagePerYear);
+            var unscheduledRepayment = new Currency(unscheduledRepaymentValue, InputKind.Auto);
+            var initialDebt1 = new Currency(initialDebt);
+            var borrowing1 = new Percentage(borrowing);
+            var reducedDebt = Calculator.GetReducedDebt(initialDebt1, new Currency(unscheduledRepayment));
+            var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowing1);
 
-            var p = new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), initialDebt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
+            var p = new PaymentModel(date, new Currency(monthlyPayment, InputKind.Auto), initialDebt1, borrowing1, unscheduledRepayment, reducedDebt, interest);
             Assert.Equal(date, p.Date);
             Assert.Equal(monthlyPayment, p.Payment.Value);
         }
@@ -29,8 +32,8 @@ namespace Interest.Tests
         {
             var date = new DateTime(2020, 04, 01);
             var monthlyPayment = -1.1;
-            var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
-            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), 100, .001, unscheduledRepayment, 5000, 1));
+            var unscheduledRepayment = new Currency(0, InputKind.Auto);
+            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new Currency(monthlyPayment, InputKind.Auto), new Currency(100), new Percentage(.001), unscheduledRepayment, new Currency(5000), new Currency(1)));
         }
 
         [Fact]
@@ -39,9 +42,9 @@ namespace Interest.Tests
             var date = new DateTime(2020, 04, 01);
             var monthlyPayment = 1.1;
             var debt = -1.1;
-            var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
+            var unscheduledRepayment = new Currency(0, InputKind.Auto);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), debt, .001, unscheduledRepayment, 5000, 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new Currency(monthlyPayment, InputKind.Auto), new Currency(debt), new Percentage(.001), unscheduledRepayment, new Currency(5000), new Currency(1)));
         }
 
         [Fact]
@@ -50,10 +53,10 @@ namespace Interest.Tests
             var date = new DateTime(2020, 04, 01);
             var monthlyPayment = 1.1;
             var debt = 1.1;
-            var borrowingPercentagePerYear = -.0011;
-            var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
+            var borrowing = -.0011;
+            var unscheduledRepayment = new Currency(0, InputKind.Auto);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), debt, borrowingPercentagePerYear, unscheduledRepayment, 5000, 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new Currency(monthlyPayment, InputKind.Auto), new Currency(debt), new Percentage(borrowing), unscheduledRepayment, new Currency(5000), new Currency(1)));
         }
 
         [Fact]
@@ -63,9 +66,9 @@ namespace Interest.Tests
             var monthlyPayment = 1.1;
             var debt = 1.1;
             var borrowingPercentagePerYear = 1.1;
-            var unscheduledRepayment = new InputValue<double>(-0.0011, InputType.Auto);
+            var unscheduledRepayment = new Currency(-0.0011, InputKind.Auto);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new InputValue<double>(monthlyPayment, InputType.Auto), debt, borrowingPercentagePerYear, unscheduledRepayment, 5000, 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new PaymentModel(date, new Currency(monthlyPayment, InputKind.Auto), new Currency(debt), new Percentage(borrowingPercentagePerYear), unscheduledRepayment, new Currency(5000), new Currency(1)));
         }
 
     }

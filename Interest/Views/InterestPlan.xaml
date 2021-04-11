@@ -7,6 +7,7 @@
       xmlns:model="clr-namespace:Interest.Models"
       xmlns:view="clr-namespace:Interest.Views"
       xmlns:local="clr-namespace:Interest"
+      xmlns:types="clr-namespace:Interest.Types"
       xmlns:SystemGlobalization="clr-namespace:System.Globalization;assembly=System.Runtime"
       xmlns:converters="clr-namespace:Interest.Converters"
       d:DataContext="{d:DesignInstance Type=vm:InterestPlanViewModelDesignTime, IsDesignTimeCreatable=True}"
@@ -37,7 +38,9 @@
         </Style>
         <converters:PercentageConverter x:Key="percentageConverter" />
         <converters:BooleanInversionConverter x:Key="booleanInversionConverter" />
-        <converters:InputValueConverter x:Key="InputValue"/>
+        <converters:CurrencyConverter x:Key="currencyConverter"/>
+        <types:DateKind x:Key="Month">Month</types:DateKind>
+        <types:DateKind x:Key="Year">Year</types:DateKind>
     </UserControl.Resources>
 
     <Grid Margin="10" HorizontalAlignment="Center">
@@ -52,26 +55,51 @@
             <Label Content="Lender:" />
             <TextBox Text="{Binding Lender, UpdateSourceTrigger=PropertyChanged}"/>
             <Label Content="Starting from:" />
-            <TextBox Text="{Binding StartMonth, StringFormat=d, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" />
+            <TextBox Text="{Binding 
+                StartMonth, 
+                StringFormat=d, 
+                ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" />
             <Label Content="Loan:" />
-            <TextBox Text="{Binding LoanAmount, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}"/>
+            <TextBox Text="{Binding 
+                LoanAmount, 
+                StringFormat=C2, 
+                ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, 
+                Converter={StaticResource currencyConverter}}"/>
             <Label Content="Borrowing:" />
-            <TextBox Text="{Binding BorrowingPercentagePerYear, StringFormat=p2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, Converter={StaticResource percentageConverter}}"/>
+            <TextBox Text="{Binding 
+                Borrowing, 
+                StringFormat=p2, 
+                ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, 
+                Converter={StaticResource percentageConverter},
+                ConverterParameter={StaticResource Year}}"/>
             <Label Content="Years:" />
             <TextBox Text="{Binding Years}" />
             <CheckBox Content="Full repayment" IsChecked="{Binding IsFullRepayment}" />
             <Label Content="Redemption free months:" />
             <TextBox Text="{Binding RedemptionFreeMonths}" />
             <Label Content="Monthly Payment/Redemption:" />
-            <TextBox Text="{Binding RedemptionAmount, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}"
+            <TextBox Text="{Binding 
+                    RedemptionAmount, 
+                    StringFormat=C2, 
+                    ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, 
+                    Converter={StaticResource currencyConverter}}"
+                IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
+            <Label Content="Redemption Rate:"
                      IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
-            <Label Content="Redemption:"
-                     IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
-            <TextBox Text="{Binding RedemptionPercentage, StringFormat=p2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, Converter={StaticResource percentageConverter}}"
+            <TextBox Text="{Binding 
+                RedemptionRate, 
+                StringFormat=p2, 
+                ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, 
+                Converter={StaticResource percentageConverter},
+                ConverterParameter={StaticResource Year}}"
                      IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
             <Label Content="Unscheduled Repayment:" 
                      IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
-            <TextBox Text="{Binding UnscheduledRepaymentPercentage, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, Converter={StaticResource percentageConverter}}"
+            <TextBox Text="{Binding 
+                UnscheduledRepayment, 
+                ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, 
+                Converter={StaticResource percentageConverter},
+                ConverterParameter={StaticResource Year}}"
                      IsEnabled="{Binding IsFullRepayment, Converter={StaticResource booleanInversionConverter}}"/>
             <CheckBox Content="optimize extra repayments:" IsChecked="{Binding IsApplyAllUnscheduledRepayments}"
                     ToolTip="Will add the maximum unschedluded repayment every 12 months"
@@ -90,7 +118,13 @@
             >
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Date, StringFormat=d, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" Header="Date" FontWeight="Light" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path=UnscheduledRepayment, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, Mode=TwoWay, Converter={StaticResource InputValue}}" Header="Extra">
+                <DataGridTextColumn Binding="{Binding 
+                        Path=UnscheduledRepayment, 
+                        StringFormat=C2, 
+                        ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, 
+                        Mode=TwoWay, 
+                        Converter={StaticResource currencyConverter}}"
+                    Header="Extra">
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="ContentTemplate">
@@ -110,34 +144,72 @@
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding UnscheduledRepayment, Converter={StaticResource InputValue}}" Value="False">
+                                <DataTrigger Binding="{Binding 
+                                        UnscheduledRepayment, 
+                                        Converter={StaticResource currencyConverter}}"
+                                    Value="False">
                                     <Setter Property="FontWeight" Value="Normal"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding UnscheduledRepayment, Converter={StaticResource InputValue}}" Value="True">
+                                <DataTrigger Binding="{Binding 
+                                        UnscheduledRepayment,
+                                        Converter={StaticResource currencyConverter}}"
+                                    Value="True">
                                     <Setter Property="FontWeight" Value="Heavy"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=ReducedDebt, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" Header="Reduced Debt" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path=Payment, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, Converter={StaticResource InputValue}, UpdateSourceTrigger=LostFocus}" Header="Payment">
+                <DataGridTextColumn Binding="{Binding 
+                        Path=ReducedDebt,
+                        StringFormat=C2, 
+                        ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture},
+                        Converter={StaticResource currencyConverter}}" 
+                    Header="Reduced Debt" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding 
+                        Path=Payment, 
+                        StringFormat=C2, 
+                        ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}, 
+                        Converter={StaticResource currencyConverter}, 
+                        UpdateSourceTrigger=LostFocus}" 
+                    Header="Payment">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Payment, Converter={StaticResource InputValue}}" Value="False">
+                                <DataTrigger Binding="{Binding 
+                                        Payment, 
+                                        Converter={StaticResource currencyConverter}}" 
+                                    Value="False">
                                     <Setter Property="FontWeight" Value="Normal"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Payment, Converter={StaticResource InputValue}}" Value="True">
+                                <DataTrigger Binding="{Binding 
+                                        Payment, 
+                                        Converter={StaticResource currencyConverter}}" 
+                                    Value="True">
                                     <Setter Property="FontWeight" Value="Heavy"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=Interest, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" Header="Interest" IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding Path=Repayment, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" Header="Repayment" IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding Path=ResidualDebt, StringFormat=C2, ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture}}" Header="Residual Debt" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Binding="{Binding 
+                        Path=Interest, 
+                        StringFormat=C2, 
+                        ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture},
+                        Converter={StaticResource currencyConverter}}" 
+                    Header="Interest" IsReadOnly="True" />
+                <DataGridTextColumn 
+                        Binding="{Binding Path=Repayment, 
+                        StringFormat=C2, 
+                        ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture},
+                        Converter={StaticResource currencyConverter}}" 
+                    Header="Repayment" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding 
+                        Path=ResidualDebt, 
+                        StringFormat=C2, 
+                        ConverterCulture={x:Static SystemGlobalization:CultureInfo.CurrentCulture},
+                        Converter={StaticResource currencyConverter}}" 
+                    Header="Residual Debt" IsReadOnly="True" Width="*"/>
             </DataGrid.Columns>
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">

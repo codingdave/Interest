@@ -1,37 +1,43 @@
 ﻿using Interest.Models;
+using Interest.Types;
 using System;
 
 namespace Interest.ViewModels
 {
     public class PaymentViewModel : ViewModelBase
     {
-        public PaymentViewModel(DateTime date, InputValue<double> payment, double debt,
-            double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment)
+        public PaymentViewModel(DateTime date,
+            Currency payment, Currency debt,
+            Percentage borrowing,
+            Currency unscheduledRepayment)
         {
             // standard repayment: based on necessary input the reduced debt and the interest are calculated
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
-            var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowingPercentagePerYear);
+            var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowing);
 
-            _paymentModel = new PaymentModel(date, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
+            _paymentModel = new PaymentModel(date, payment, debt, borrowing, unscheduledRepayment, reducedDebt, interest);
         }
 
-        public PaymentViewModel(DateTime date, double debt,
-            double borrowingPercentagePerYear)
+        public PaymentViewModel(DateTime date,
+            Currency debt,
+            Percentage borrowing)
         {
             // no repayment, interest cost only
-            var unscheduledRepayment = new InputValue<double>(0, InputType.Auto);
+            var unscheduledRepayment = new Currency(0, InputKind.Auto);
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
-            var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowingPercentagePerYear);
-           
-            _paymentModel = new PaymentModel(date, new InputValue<double>(interest, InputType.Auto), debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interest);
+            var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowing);
+
+            _paymentModel = new PaymentModel(date, interest, debt, borrowing, unscheduledRepayment, reducedDebt, interest);
         }
 
-        public PaymentViewModel(DateTime date, InputValue<double> payment, double debt,
-            double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment,
-            double reducedDebt, double interestPerYear)
+        public PaymentViewModel(DateTime date, 
+            Currency payment, Currency debt,
+            Percentage borrowing, 
+            Currency unscheduledRepayment,
+            Currency reducedDebt, Currency interestPerYear)
         {
             // full repayment
-            _paymentModel = new PaymentModel(date, payment, debt, borrowingPercentagePerYear, unscheduledRepayment, reducedDebt, interestPerYear);
+            _paymentModel = new PaymentModel(date, payment, debt, borrowing, unscheduledRepayment, reducedDebt, interestPerYear);
         }
 
         PaymentModel _paymentModel;
@@ -42,7 +48,7 @@ namespace Interest.ViewModels
             set => _ = SetProperty(ref _paymentModel.Date, value);
         }
 
-        public InputValue<double> Payment
+        public Currency Payment
         {
             get => _paymentModel.Payment;
             set
@@ -53,18 +59,18 @@ namespace Interest.ViewModels
             }
         }
 
-        public double BorrowingPercentagePerYear
+        public Percentage Borrowing
         {
-            get => _paymentModel.BorrowingPercentagePerYear;
+            get => _paymentModel.Borrowing;
             set
             {
-                if (SetProperty(ref _paymentModel.BorrowingPercentagePerYear, value))
+                if (SetProperty(ref _paymentModel.Borrowing, value))
                 {
                 }
             }
         }
 
-        public InputValue<double> UnscheduledRepayment
+        public Currency UnscheduledRepayment
         {
             get => _paymentModel.UnscheduledRepayment;
             set
@@ -75,10 +81,9 @@ namespace Interest.ViewModels
             }
         }
 
-        public double Interest => _paymentModel.Interest;
-        public double BorrowingPercentage => _paymentModel.BorrowingPercentage;
-        public double Repayment => _paymentModel.Repayment;
-        public double ResidualDebt => _paymentModel.ResidualDebt;
-        public double ReducedDebt => _paymentModel.ReducedDebt;
+        public Currency Interest => _paymentModel.Interest;
+        public Currency Repayment => _paymentModel.Repayment;
+        public Currency ResidualDebt => _paymentModel.ResidualDebt;
+        public Currency ReducedDebt => _paymentModel.ReducedDebt;
     }
 }

@@ -1,8 +1,10 @@
 ﻿using Interest.Options;
 using Interest.ViewModels;
 using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Markup;
 
 namespace Interest.Views
 {
@@ -13,6 +15,7 @@ namespace Interest.Views
     {
         public MainWindow()
         {
+            Language = XmlLanguage.GetLanguage(Thread.CurrentThread.CurrentUICulture.Name);
             InitializeComponent();
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;

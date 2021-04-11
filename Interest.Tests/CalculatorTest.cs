@@ -1,4 +1,5 @@
-﻿using Interest.ViewModels;
+﻿using Interest.Types;
+using Interest.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +20,12 @@ namespace Interest.Tests
                 previousPayments: previousPayments,
                 startMonth: DateTime.Now,
                 years: years,
-                loan: 100000,
-                percentagePerYear: .77,
-                redemptionPercentage: 5,
+                loan: new Currency(100000),
+                borrowing: new Percentage(.77),
+                redemption: new Percentage(5),
                 redemptionFreeMonths: 12,
                 isApplyAllUnscheduledRepayments: false,
-                unscheduledRepaymentPercentage: 5,
+                unscheduledRepaymentPercentage: new Percentage(5),
                 isFullRepayment: false).ToList();
 
             Assert.True(payments.Count <= years * 12, "payment plan has at most as many entries as months but can stop before if mortage is payed back");

@@ -10,8 +10,8 @@ using Serilog;
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Windows;
-using System.Windows.Markup;
 
 namespace Interest
 {
@@ -22,15 +22,15 @@ namespace Interest
     {
         public App()
         {
-            // update MWVM: TotalInterest and ResidualDebt whenever the tabs value change
-            // scheint so zu sein, dass die _redemptionPercentage und borrowingrate in der UI verwechselt sind
+            // optimize broken
+            // fix startup, configuration, and runtime UI culture
+            // remove all from VM which is not a model for UI. Create calculationService, Factories, ... if necessary
+            // !interestplanVM: RedemptionRate <-> BorrowingPercentage
             // create options menu, place language there 
-            // classes for percentage, currency, fraction?
             // MainWindow: Years, StartMonth
             // GridView: Show Index for month
             // Splash image, size, position
             // Application Icon
-            // obfuscation?
             // Deployment: Zip? Single archive? Trimmed?
         }
 
@@ -45,10 +45,10 @@ namespace Interest
             // Start the application with the culture selected
             var configuration = host.Services.GetService<IConfiguration>();
             var options = configuration.Get<Rootobject>();
-            if (options?.CultureInfo != null)
-            {
-                System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(options.CultureInfo);
-            }
+
+            Thread.CurrentThread.CurrentUICulture = options?.CultureInfo != null
+                ? CultureInfo.GetCultureInfo(options.CultureInfo)
+                : CultureInfo.GetCultureInfo("en-GB");
 
             try
             {

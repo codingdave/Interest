@@ -1,75 +1,75 @@
-﻿using Interest.ViewModels;
+﻿using Interest.Types;
+using Interest.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interest
 {
     public static class Calculator
     {
-        public static double GetRepayment(double totalPayment, double interest)
+        public static Currency GetRepayment(Currency totalPayment, Currency interest)
         {
             return totalPayment - interest;
         }
 
-        public static double GetInterestCostPerMonth(double reducedDebt, double interestPercentagePerYear)
+        public static Currency GetInterestCostPerMonth(Currency reducedDebt, Percentage interest)
         {
-            return reducedDebt * interestPercentagePerYear / 100 / 12;
+            return reducedDebt * interest.PerMonthAsFraction;
         }
 
-        public static double GetResidualDebt(double reducedDebt, double repayment)
+        public static Currency GetResidualDebt(Currency reducedDebt, Currency repayment)
         {
-            return Math.Max(reducedDebt - repayment, 0);
+            return Currency.Max(reducedDebt - repayment, 0);
         }
 
-        public static double GetReducedDebt(double initialDebt, InputValue<double> unscheduledRepayment)
+        public static Currency GetReducedDebt(Currency initialDebt, Currency unscheduledRepayment)
         {
-            return initialDebt - unscheduledRepayment.Value;
+            return initialDebt - unscheduledRepayment;
         }
 
         public static IEnumerable<PaymentViewModel> GetPaymentPlan(
             IEnumerable<PaymentViewModel> previousPayments,
-            DateTime startMonth, int years, double loan, double percentagePerYear,
-            double redemptionPercentage, int redemptionFreeMonths,
-            bool isApplyAllUnscheduledRepayments, double unscheduledRepaymentPercentage,
+            DateTime startMonth, int years, Currency loan,
+            Percentage borrowing,
+            Percentage redemption, int redemptionFreeMonths,
+            bool isApplyAllUnscheduledRepayments,
+            Percentage unscheduledRepaymentPercentage,
             bool isFullRepayment)
         {
             var ret = new List<PaymentViewModel>();
             var date = startMonth.AddMonths(1);
             var endMonth = startMonth.AddYears(years);
             var residualDebt = loan;
-            var borrowingPercentagePerYear = percentagePerYear;
             PaymentViewModel p;
-            var redemptionAmount = GetRedemptionAmount(loan, borrowingPercentagePerYear, redemptionPercentage);
+            var redemptionAmount = GetRedemptionAmount(loan, borrowing, redemption);
 
-            InputValue<double> unscheduledRepayment = new(0, InputType.Auto);
-            while (date < endMonth && residualDebt > 0)
+            var unscheduledRepayment = new Currency();
+            while (date < endMonth && residualDebt.Value > 0)
             {
                 if (ret.Count < redemptionFreeMonths)
                 {
                     // we only pay interest, no redemption
-                    p = new PaymentViewModel(date, residualDebt, borrowingPercentagePerYear);
+                    p = new PaymentViewModel(date, residualDebt, borrowing);
                 }
                 else
                 {
-                    InputValue<double> payment;
+                    Currency payment;
                     if (isFullRepayment)
                     {
                         // payment: 471.60
                         // interest_0: 64.17
                         // full repayment
-                        var borrowingRatePerYear = borrowingPercentagePerYear / 100.0;
+                        var borrowingRatePerYear = borrowing.PerYearAsFraction;
                         var totalInterestFactor = Math.Pow(1.0 + borrowingRatePerYear, years);
                         var totalnterestPercentage = totalInterestFactor / (totalInterestFactor - 1);
                         var interestRatePerYear = borrowingRatePerYear * totalnterestPercentage;
-                        var interestPercentagePerYear = interestRatePerYear * 100;
-                        payment = new InputValue<double>(GetInterestCostPerMonth(GetReducedDebt(residualDebt, unscheduledRepayment), interestPercentagePerYear), InputType.Auto);
+                        var interestPercentage = new Percentage(interestRatePerYear * 100);
+                        payment = GetInterestCostPerMonth(GetReducedDebt(residualDebt, unscheduledRepayment), interestPercentage);
                         var debt = GetReducedDebt(residualDebt, unscheduledRepayment);
-
-                        p = new PaymentViewModel(date, payment, debt, interestPercentagePerYear, unscheduledRepayment,
-                            debt, interestPercentagePerYear);
+                        var reducedDebt = debt;
+                        p = new PaymentViewModel(date, payment, debt, interestPercentage, unscheduledRepayment,
+                                                 reducedDebt, payment * 12);
                     }
                     else
                     {
@@ -77,22 +77,22 @@ namespace Interest
                         {
                             // we keep manual modifications
                             var oldPayment = previousPayments.ElementAt(ret.Count);
-                            unscheduledRepayment = oldPayment.UnscheduledRepayment.InputType == InputType.Manual ? oldPayment.UnscheduledRepayment : default;
-                            payment = oldPayment.Payment.InputType == InputType.Manual ? oldPayment.Payment : new InputValue<double>(redemptionAmount, InputType.Auto);
+                            unscheduledRepayment = oldPayment.UnscheduledRepayment.Kind == InputKind.Manual ? oldPayment.UnscheduledRepayment : new Currency();
+                            payment = oldPayment.Payment.Kind == InputKind.Manual ? oldPayment.Payment : new Currency(redemptionAmount);
                         }
                         else
                         {
-                            payment = new InputValue<double>(redemptionAmount, InputType.Auto);
+                            payment = new Currency(redemptionAmount);
                         }
 
-                        if (unscheduledRepayment.InputType == InputType.Auto && isApplyAllUnscheduledRepayments && date.Month == startMonth.AddMonths(1).Month)
+                        if (unscheduledRepayment.Kind == InputKind.Auto && isApplyAllUnscheduledRepayments && date.Month == startMonth.AddMonths(1).Month)
                         {
                             // on optimize we override everythings
-                            unscheduledRepayment = new InputValue<double>(loan * unscheduledRepaymentPercentage / 100.0, InputType.Auto);
+                            unscheduledRepayment = new Currency(loan * unscheduledRepaymentPercentage.PerMonthAsFraction);
                         }
-                        unscheduledRepayment = new InputValue<double>(Math.Min(unscheduledRepayment.Value, residualDebt), unscheduledRepayment.InputType);
+                        unscheduledRepayment = Currency.Min(unscheduledRepayment, residualDebt, unscheduledRepayment.Kind);
 
-                        p = new PaymentViewModel(date, payment, residualDebt, borrowingPercentagePerYear, unscheduledRepayment);
+                        p = new PaymentViewModel(date, payment, residualDebt, borrowing, unscheduledRepayment);
                     }
                 }
 
@@ -103,14 +103,17 @@ namespace Interest
             return ret;
         }
 
-        public static double GetRedemptionAmount(double loan, double percentagePerYear, double redemptionPercentagePerYear)
+        public static Currency GetRedemptionAmount(
+            Currency loan,
+            Percentage percentage,
+            Percentage redemption)
         {
-            return loan * (percentagePerYear + redemptionPercentagePerYear) / 100.0 / 12.0;
+            return loan * (percentage.PerMonthAsFraction + redemption.PerMonthAsFraction);
         }
 
-        public static double GetRedemptionPercentage(double loan, double percentagePerYear, double redemptionAmount)
+        public static Percentage GetRedemptionPercentage(Currency loan, Percentage percentage, Currency redemptionAmount)
         {
-            return (redemptionAmount * 100.0 * 12.0 / loan) - percentagePerYear;
+            return new Percentage(redemptionAmount / loan * 100.0 * 12.0) - percentage;
         }
     }
 }

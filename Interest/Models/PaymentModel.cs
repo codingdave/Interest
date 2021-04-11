@@ -1,38 +1,42 @@
-﻿using System;
+﻿using Interest.Types;
+using System;
 
 namespace Interest.Models
 {
     public struct PaymentModel
     {
-        public PaymentModel(DateTime date, InputValue<double> payment, double debt, double borrowingPercentagePerYear, InputValue<double> unscheduledRepayment, double reducedDebt, double interestPerYear)
+        public PaymentModel(DateTime date,
+            Currency payment, Currency debt,
+            Percentage borrowing,
+            Currency unscheduledRepayment, Currency reducedDebt,
+            Currency interestPerYear)
         {
-            if (payment.Value < 0) { throw new ArgumentOutOfRangeException("No payment given"); }
+            if (payment < 0) { throw new ArgumentOutOfRangeException("No payment given"); }
             if (debt <= 0) { throw new ArgumentOutOfRangeException("No Debt given"); }
-            if (borrowingPercentagePerYear <= 0) { throw new ArgumentOutOfRangeException("No Borrowing Rate per year given"); }
-            if (unscheduledRepayment.Value < 0) { throw new ArgumentOutOfRangeException("Negative unscheduled repayment given"); }
+            if (borrowing.PerYear <= 0) { throw new ArgumentOutOfRangeException("No Borrowing Rate per year given"); }
+            if (unscheduledRepayment < 0) { throw new ArgumentOutOfRangeException("Negative unscheduled repayment given"); }
             if (interestPerYear < 0) { throw new ArgumentOutOfRangeException("No interest given"); }
 
             Date = date;
-            BorrowingPercentagePerYear = borrowingPercentagePerYear;
-            BorrowingPercentage = BorrowingPercentagePerYear / 12.0;
+            Borrowing = borrowing;
+
             UnscheduledRepayment = unscheduledRepayment;
             ReducedDebt = reducedDebt;
             Interest = interestPerYear;
 
-            Payment = new InputValue<double>(Math.Min(payment.Value, debt + Interest), payment.InputType);
-            Repayment = Calculator.GetRepayment(Payment.Value, Interest);
+            Payment = Currency.Min(payment, debt + Interest);
+            Repayment = Calculator.GetRepayment(Payment, Interest);
             ResidualDebt = Calculator.GetResidualDebt(ReducedDebt, Repayment);
         }
 
         public DateTime Date;
-        public InputValue<double> Payment;
-        public double BorrowingPercentagePerYear;
-        public InputValue<double> UnscheduledRepayment;
-        public double Interest;
+        public Currency Payment;
+        public Percentage Borrowing;
+        public Currency UnscheduledRepayment;
+        public Currency Interest;
 
-        public double BorrowingPercentage { get; }
-        public double ReducedDebt { get; }
-        public double Repayment { get; }
-        public double ResidualDebt { get; }
+        public Currency ReducedDebt { get; }
+        public Currency Repayment { get; }
+        public Currency ResidualDebt { get; }
     }
 }

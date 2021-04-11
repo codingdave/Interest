@@ -9,7 +9,7 @@ namespace Interest.Options
         {
             return new InterestPlanViewModelOption
             {
-                BorrowingPercentagePerYear = .77,
+                BorrowingPercentage = .77,
                 LoanAmount = 100000,
                 RedemptionFreeMonths = 12,
                 RedemptionPercentage = 2.5,
@@ -24,7 +24,7 @@ namespace Interest.Options
         {
             return new InterestPlanViewModelOption
             {
-                BorrowingPercentagePerYear = .99,
+                BorrowingPercentage = .99,
                 LoanAmount = 250000,
                 RedemptionFreeMonths = 0,
                 RedemptionPercentage = 2.5,
@@ -38,7 +38,7 @@ namespace Interest.Options
         public DateTime _startMonth;
         public int _years;
         public double _unscheduledRepaymentPercentage;
-        public double _borrowingPercentagePerYear;
+        public double _borrowingPercentage;
         public double _redemptionPercentage;
         public double _loanAmount;
         public string _lender;
@@ -61,10 +61,10 @@ namespace Interest.Options
             set { _unscheduledRepaymentPercentage = value; }
         }
 
-        public double BorrowingPercentagePerYear
+        public double BorrowingPercentage
         {
-            get { return _borrowingPercentagePerYear; }
-            set { _borrowingPercentagePerYear = value; }
+            get { return _borrowingPercentage; }
+            set { _borrowingPercentage = value; }
         }
 
         public double RedemptionPercentage

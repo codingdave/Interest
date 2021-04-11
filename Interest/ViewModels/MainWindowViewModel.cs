@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Windows.Input;
 
 namespace Interest.ViewModels
@@ -15,12 +16,13 @@ namespace Interest.ViewModels
     {
         public MainWindowViewModel(IConfiguration configuration)
         {
-            var options = configuration.Get<Rootobject>() ?? new Rootobject();
-            InitiateOptions(options);
-
             InterestPlanViewModels = new ObservableCollection<InterestPlanViewModel>();
             InterestPlanViewModels.CollectionChanged += InterestPlanViewModels_CollectionChanged;
+
+            var options = configuration.Get<Rootobject>() ?? new Rootobject();
+            InitiateOptions(options);
             options.InterestPlanViewModelOptions.ForEach(ip => AddInterestPlanViewModel(new InterestPlanViewModel(ip)));
+
             SelectedCulture = CultureInfo.GetCultureInfo(options.CultureInfo);
             Cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
 
@@ -94,18 +96,26 @@ namespace Interest.ViewModels
             }
             if (options.CultureInfo == null)
             {
-                options.CultureInfo = CultureInfo.InvariantCulture.ToString();
+                options.CultureInfo = Thread.CurrentThread.CurrentUICulture.ToString();
             }
         }
 
         #region OverallTotalInterest
         private double _overallTotalInterest;
-        public double OverallTotalInterest { get => _overallTotalInterest; set => SetProperty(ref _overallTotalInterest, value); }
+        public double OverallTotalInterest
+        {
+            get => _overallTotalInterest;
+            set => SetProperty(ref _overallTotalInterest, value);
+        }
         #endregion
 
         #region OverallResidualDebt
         private double _overallResidualDebt;
-        public double OverallResidualDebt { get => _overallResidualDebt; set => SetProperty(ref _overallResidualDebt, value); }
+        public double OverallResidualDebt
+        {
+            get => _overallResidualDebt;
+            set => SetProperty(ref _overallResidualDebt, value);
+        }
         #endregion
 
         public CultureInfo SelectedCulture
@@ -116,9 +126,11 @@ namespace Interest.ViewModels
                 if (value != _selectedCulture)
                 {
                     var old = _selectedCulture;
+                    ShowMessage?.Invoke($"Changing the culture from '{old}' to '{value}'. A restart is necessary to apply these changes.");
+
                     _selectedCulture = value;
                     CultureInfo.CurrentCulture = value;
-                    ShowMessage?.Invoke($"Changing the culture from '{old}' to '{value}'. A restart is necessary to apply these changes.");
+                    Thread.CurrentThread.CurrentUICulture = value;
                 }
             }
         }
@@ -148,9 +160,10 @@ namespace Interest.ViewModels
             var options = new Rootobject();
             foreach (var m in InterestPlanViewModels)
             {
-                options.InterestPlanViewModelOptions.Add(m.Values);
+                options.InterestPlanViewModelOptions.Add(m.Options);
             }
-            options.CultureInfo = CultureInfo.CurrentCulture.ToString();
+
+            options.CultureInfo = SelectedCulture.ToString();
 
             var joptions = new JsonSerializerOptions()
             {

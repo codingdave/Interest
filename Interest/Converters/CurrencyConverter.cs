@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Interest.Types;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 
 namespace Interest.Converters
 {
-    class InputValueConverter : IValueConverter
+    class CurrencyConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var o = (InputValue<double>)value;
+            var o = (Currency)value;
             var ret = o.Value;
             return ret;
         }
@@ -18,7 +19,7 @@ namespace Interest.Converters
             object ret = value;
             if (double.TryParse((string)value, out var val))
             {
-                ret = new InputValue<double>(val, InputType.Manual);
+                ret = new Currency(val, InputKind.Manual);
             }
             return ret;
         }
