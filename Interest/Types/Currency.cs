@@ -24,8 +24,10 @@ namespace Interest.Types
 
         public double Value { get; internal set; }
         public InputKind Kind { get; }
-
+        
+        
         public static Currency operator +(Currency a, Currency b) => new Currency(a.Value + b.Value);
+
         public static Currency operator -(Currency a, Currency b) => new Currency(a.Value - b.Value);
 
         public static Currency operator /(Currency a, Currency b) => new Currency(a.Value / b.Value);
@@ -78,6 +80,18 @@ namespace Interest.Types
             }
 
             return new Currency(Math.Max(currency.Value, rhs));
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Currency currency &&
+                   Value == currency.Value &&
+                   Kind == currency.Kind;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Value, Kind);
         }
 
         public static Currency operator *(Currency a, double b) => new Currency(a.Value * b);

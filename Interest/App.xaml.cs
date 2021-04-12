@@ -22,6 +22,7 @@ namespace Interest
     {
         public App()
         {
+            // Unit tests for Percentage, Currency
             // optimize broken
             // fix startup, configuration, and runtime UI culture
             // remove all from VM which is not a model for UI. Create calculationService, Factories, ... if necessary
