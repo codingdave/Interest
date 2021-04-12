@@ -2,20 +2,17 @@
 {
     public record Percentage
     {
-        public Percentage(Currency currency) : this(currency.Value)
-        {
-        }
+        public Percentage(Currency currency) : this(currency.Value) { }
 
         public Percentage(double perYear, InputKind inputKind = InputKind.Auto)
         {
             PerYear = perYear;
-            PerMonth = perYear / 12.0;
             InputKind = inputKind;
         }
 
         public double PerYear { get; }
 
-        public double PerMonth { get; }
+        public double PerMonth => PerYear / 12.0;
 
         public double PerYearAsFraction => PerYear / 100.0;
         public double PerMonthAsFraction => PerMonth / 100.0;

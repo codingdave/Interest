@@ -6,11 +6,13 @@ namespace Interest.ViewModels
 {
     public class PaymentViewModel : ViewModelBase
     {
-        public PaymentViewModel(DateTime date,
+        public PaymentViewModel(int index, 
+            DateTime date,
             Currency payment, Currency debt,
             Percentage borrowing,
             Currency unscheduledRepayment)
         {
+            Index = index;
             // standard repayment: based on necessary input the reduced debt and the interest are calculated
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
             var interest = Calculator.GetInterestCostPerMonth(reducedDebt, borrowing);
@@ -18,10 +20,13 @@ namespace Interest.ViewModels
             _paymentModel = new PaymentModel(date, payment, debt, borrowing, unscheduledRepayment, reducedDebt, interest);
         }
 
-        public PaymentViewModel(DateTime date,
+        public PaymentViewModel(int index,
+            DateTime date,
             Currency debt,
             Percentage borrowing)
         {
+            Index = index;
+
             // no repayment, interest cost only
             var unscheduledRepayment = new Currency(0, InputKind.Auto);
             var reducedDebt = Calculator.GetReducedDebt(debt, unscheduledRepayment);
@@ -30,12 +35,15 @@ namespace Interest.ViewModels
             _paymentModel = new PaymentModel(date, interest, debt, borrowing, unscheduledRepayment, reducedDebt, interest);
         }
 
-        public PaymentViewModel(DateTime date, 
+        public PaymentViewModel(int index,
+            DateTime date, 
             Currency payment, Currency debt,
             Percentage borrowing, 
             Currency unscheduledRepayment,
             Currency reducedDebt, Currency interestPerYear)
         {
+            Index = index;
+
             // full repayment
             _paymentModel = new PaymentModel(date, payment, debt, borrowing, unscheduledRepayment, reducedDebt, interestPerYear);
         }
@@ -85,5 +93,7 @@ namespace Interest.ViewModels
         public Currency Repayment => _paymentModel.Repayment;
         public Currency ResidualDebt => _paymentModel.ResidualDebt;
         public Currency ReducedDebt => _paymentModel.ReducedDebt;
+
+        public int Index { get; }
     }
 }

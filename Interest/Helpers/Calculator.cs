@@ -43,14 +43,14 @@ namespace Interest
             var residualDebt = loan;
             PaymentViewModel p;
             var redemptionAmount = GetRedemptionAmount(loan, borrowing, redemption);
-
+            var index = 1;
             var unscheduledRepayment = new Currency();
             while (date < endMonth && residualDebt.Value > 0)
             {
                 if (ret.Count < redemptionFreeMonths)
                 {
                     // we only pay interest, no redemption
-                    p = new PaymentViewModel(date, residualDebt, borrowing);
+                    p = new PaymentViewModel(index++, date, residualDebt, borrowing);
                 }
                 else
                 {
@@ -68,7 +68,7 @@ namespace Interest
                         payment = GetInterestCostPerMonth(GetReducedDebt(residualDebt, unscheduledRepayment), interestPercentage);
                         var debt = GetReducedDebt(residualDebt, unscheduledRepayment);
                         var reducedDebt = debt;
-                        p = new PaymentViewModel(date, payment, debt, interestPercentage, unscheduledRepayment,
+                        p = new PaymentViewModel(index++, date, payment, debt, interestPercentage, unscheduledRepayment,
                                                  reducedDebt, payment * 12);
                     }
                     else
@@ -92,7 +92,7 @@ namespace Interest
                         }
                         unscheduledRepayment = Currency.Min(unscheduledRepayment, residualDebt, unscheduledRepayment.Kind);
 
-                        p = new PaymentViewModel(date, payment, residualDebt, borrowing, unscheduledRepayment);
+                        p = new PaymentViewModel(index++, date, payment, residualDebt, borrowing, unscheduledRepayment);
                     }
                 }
 

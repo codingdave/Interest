@@ -29,7 +29,6 @@ namespace Interest
             // !interestplanVM: RedemptionRate <-> BorrowingPercentage
             // create options menu, place language there 
             // MainWindow: Years, StartMonth
-            // GridView: Show Index for month
             // Splash image, size, position
             // Application Icon
             // Deployment: Zip? Single archive? Trimmed?
