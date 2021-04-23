@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Splash.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="GitInfo" Version="2.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -31,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <SplashScreen Include="Resources\Splash.jpg" />
+    <Resource Include="Resources\Splash.jpg" />
   </ItemGroup>
 
   <ItemGroup>

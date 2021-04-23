@@ -27,7 +27,7 @@ namespace Interest
             // fix startup, configuration, and runtime UI culture
             // remove all from VM which is not a model for UI. Create calculationService, Factories, ... if necessary
             // !interestplanVM: RedemptionRate <-> BorrowingPercentage
-            // create options menu, place language there 
+            // create options menu, place language there
             // MainWindow: Years, StartMonth
             // Splash image, size, position
             // Application Icon
@@ -37,6 +37,9 @@ namespace Interest
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            var splash = new SplashScreen(@"Resources\Splash.jpg");
+            splash.Show(true, true);
 
             using IHost host = CreateHostBuilder(e.Args).Build();
             var logger = host.Services.GetRequiredService<ILogger<App>>();
